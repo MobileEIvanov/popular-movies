@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class MovieItem {
 
+    public static final String MOVIE_DATA = "movie_data";
     private String imageUrl;
 
 

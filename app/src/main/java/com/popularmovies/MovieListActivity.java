@@ -3,18 +3,21 @@ package com.popularmovies;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.popularmovies.data.RestClient;
+import com.popularmovies.data.RestDataSource;
+import com.popularmovies.data.models.ConfigurationResponse;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * An activity representing a list of Items. This activity
@@ -43,6 +46,32 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
 
         initToolbar();
         setupRecyclerView();
+
+        RestDataSource restDataSource = new RestDataSource();
+
+        restDataSource
+                .requestConfigurations(RestClient.API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ConfigurationResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ConfigurationResponse configurationResponse) {
+                            if(configurationResponse != null){
+
+                            }
+                    }
+                });
+
     }
 
 
@@ -60,8 +89,13 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
 
 
     @Override
-    public void onMovieSelected() {
+    public void onMovieSelected(MovieItem movieItem, View imageView) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        startActivity(intent);
+        // Pass data object in the bundle and populate details activity.
+        intent.putExtra(MovieItem.MOVIE_DATA, movieItem.getImageUrl());
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this,imageView , getString(R.string.share_component_list_details));
+        startActivity(intent, options.toBundle());
+
     }
 }

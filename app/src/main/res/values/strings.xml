@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="title_movie_list">Items</string>
+    <string name="title_movie_list">Movies </string>
     <string name="title_movie_detail">Movie Detail</string>
+
+    <string name="share_component_list_details">movie_image</string>
+
+    <string name="api_key_movie_db"></string>
 </resources>

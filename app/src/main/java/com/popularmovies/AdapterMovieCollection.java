@@ -51,7 +51,8 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
 
             @Override
             public void onClick(View v) {
-                mListenerMovieIteraction.onMovieSelected();
+                int position = (Integer) v.getTag();
+                mListenerMovieIteraction.onMovieSelected(mData.get(position),mBinding.ivThumbMovie);
             }
         };
 
@@ -71,6 +72,6 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
     }
 
     public interface ICollectionInteraction {
-        void onMovieSelected();
+        void onMovieSelected(MovieItem movieItem, View imageView);
     }
 }
