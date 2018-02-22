@@ -12,8 +12,11 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.popularmovies.data.RestClient;
 import com.popularmovies.data.RestDataSource;
 import com.popularmovies.data.models.ConfigurationResponse;
+import com.popularmovies.data.models.MoviesResponse;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
+
+import java.util.List;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -45,7 +48,7 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
 
 
         initToolbar();
-        setupRecyclerView();
+
 
         RestDataSource restDataSource = new RestDataSource();
 
@@ -72,6 +75,29 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
                     }
                 });
 
+
+
+        restDataSource.requestPopularMovies(RestClient.API_KEY,1)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<MoviesResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(MoviesResponse moviesResponse) {
+                            if(moviesResponse!=null && moviesResponse.getMovieItems()!=null && moviesResponse.getMovieItems().size()>0){
+                                setupRecyclerView(moviesResponse.getMovieItems());
+                            }
+                    }
+                });
     }
 
 
@@ -82,9 +108,9 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
     }
 
 
-    private void setupRecyclerView() {
+    private void setupRecyclerView(List<MovieItem> movieItemList) {
         mBinding.layoutMovieList.movieList.setLayoutManager(new GridLayoutManager(this, GRID_COLUMN_COUNT));
-        mBinding.layoutMovieList.movieList.setAdapter(new AdapterMovieCollection(MovieItem.generateMovies(),this));
+        mBinding.layoutMovieList.movieList.setAdapter(new AdapterMovieCollection(movieItemList,this));
     }
 
 
@@ -92,7 +118,7 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
     public void onMovieSelected(MovieItem movieItem, View imageView) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
         // Pass data object in the bundle and populate details activity.
-        intent.putExtra(MovieItem.MOVIE_DATA, movieItem.getImageUrl());
+        intent.putExtra(MovieItem.MOVIE_DATA, movieItem.getPosterPath());
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this,imageView , getString(R.string.share_component_list_details));
         startActivity(intent, options.toBundle());

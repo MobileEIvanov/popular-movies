@@ -5,6 +5,7 @@ import android.util.Log;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.popularmovies.data.models.ConfigurationResponse;
+import com.popularmovies.data.models.MoviesResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +23,7 @@ import rx.Observable;
 
 
 public class RestDataSource implements QueryRequest {
-    String BASE_IMAGE_URL = "https://image.tmdb.org/";
+    public  static  final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
     String BASE_API_URL = "https://api.themoviedb.org/";
     String API_VERSION = "3";
 //    https://api.themoviedb.org/3/movie/550?api_key=d697cb5b08dda13f992c27272775af90
@@ -43,5 +44,10 @@ public class RestDataSource implements QueryRequest {
     @Override
     public Observable<ConfigurationResponse> requestConfigurations(String apiKey) {
         return mRequestQuery.requestConfigurations(apiKey);
+    }
+
+    @Override
+    public Observable<MoviesResponse> requestPopularMovies(String apiKey, long page) {
+        return mRequestQuery.requestPopularMovies(apiKey,page);
     }
 }

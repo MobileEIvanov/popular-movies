@@ -4,14 +4,19 @@ package com.popularmovies;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.popularmovies.data.RestClient;
+import com.popularmovies.data.RestDataSource;
 import com.popularmovies.databinding.MovieListContentBinding;
 import com.popularmovies.entities.MovieItem;
 
 import java.util.List;
+
+import static com.popularmovies.data.RestDataSource.BASE_IMAGE_URL;
 
 /**
  * Created by emil.ivanov on 2/18/18.
@@ -65,8 +70,8 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
         }
 
         public void bindData(MovieItem movieItem) {
-            Uri uri = Uri.parse(movieItem.getImageUrl());
-
+            Uri uri = Uri.parse(BASE_IMAGE_URL+ "w300" +  movieItem.getPosterPath());
+            Log.d("Movies adapter", "bindData: " + uri);
             mBinding.ivThumbMovie.setImageURI(uri);
         }
     }

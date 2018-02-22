@@ -5,6 +5,7 @@ package com.popularmovies.data;
 
 
 import com.popularmovies.data.models.ConfigurationResponse;
+import com.popularmovies.data.models.MoviesResponse;
 
 import java.util.List;
 
@@ -17,12 +18,20 @@ public interface QueryRequest {
 
 
     String URL_CONFIGURATIONS = "configuration";
+    String URL_MOVIE_POPULAR = "movie/popular";
+    String URL_MOVIE_TOP_RATED = "movie/top_rated";
+
 
 
 
 
     @GET(URL_CONFIGURATIONS)
     Observable<ConfigurationResponse> requestConfigurations(@Query(RequestParams.API_KEY) String apiKey);
+
+
+    @GET(URL_MOVIE_POPULAR)
+    Observable<MoviesResponse> requestPopularMovies(@Query(RequestParams.API_KEY) String apiKey, @Query(RequestParams.PAGE) long page);
+
 //
 //    @GET(URL_SPORT_EVENTS)
 //    Observable<SectionHeader> requestSportEventById(@Query(QueryRequest.PARAM_EVENT_ID) int eventId);
