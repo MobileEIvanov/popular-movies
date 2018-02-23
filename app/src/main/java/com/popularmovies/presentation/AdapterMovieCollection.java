@@ -1,4 +1,4 @@
-package com.popularmovies;
+package com.popularmovies.presentation;
 
 
 import android.databinding.DataBindingUtil;
@@ -9,8 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.popularmovies.data.RestClient;
-import com.popularmovies.data.RestDataSource;
+import com.popularmovies.R;
 import com.popularmovies.databinding.MovieListContentBinding;
 import com.popularmovies.entities.MovieItem;
 
@@ -57,7 +56,7 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
             @Override
             public void onClick(View v) {
                 int position = (Integer) v.getTag();
-                mListenerMovieIteraction.onMovieSelected(mData.get(position),mBinding.ivThumbMovie);
+                mListenerMovieIteraction.onMovieSelected(mData.get(position), mBinding.ivThumbMovie);
             }
         };
 
@@ -70,10 +69,17 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
         }
 
         public void bindData(MovieItem movieItem) {
-            Uri uri = Uri.parse(BASE_IMAGE_URL+ "w300" +  movieItem.getPosterPath());
+            Uri uri = Uri.parse(BASE_IMAGE_URL + "w300" + movieItem.getPosterPath());
             Log.d("Movies adapter", "bindData: " + uri);
             mBinding.ivThumbMovie.setImageURI(uri);
         }
+    }
+
+
+    public void updateCollection(List<MovieItem> newList) {
+        mData.clear();
+        mData.addAll(newList);
+        notifyDataSetChanged();
     }
 
     public interface ICollectionInteraction {

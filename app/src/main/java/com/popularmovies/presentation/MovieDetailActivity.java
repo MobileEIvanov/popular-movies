@@ -1,38 +1,26 @@
-package com.popularmovies;
+package com.popularmovies.presentation;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.imagepipeline.common.ImageDecodeOptions;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.popularmovies.R;
 import com.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.popularmovies.entities.MovieItem;
+import com.popularmovies.presentation.movies.MovieCollectionActivity;
 
 /**
  * An activity representing a single Movie detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link MovieListActivity}.
+ * in a {@link MovieCollectionActivity}.
  */
 public class MovieDetailActivity extends AppCompatActivity {
     ActivityMovieDetailBinding mBinding;

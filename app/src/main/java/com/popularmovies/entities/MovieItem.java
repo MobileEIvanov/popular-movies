@@ -8,7 +8,7 @@ import java.util.List;
 import static com.popularmovies.data.RequestParams.ADULT;
 import static com.popularmovies.data.RequestParams.BACKGROP_PATH;
 import static com.popularmovies.data.RequestParams.GENRE_IDS;
-import static com.popularmovies.data.RequestParams.MOVIE_ID;
+import static com.popularmovies.data.RequestParams.ID;
 import static com.popularmovies.data.RequestParams.ORIGINAL_LANGUAGE;
 import static com.popularmovies.data.RequestParams.ORIGINAL_TITLE;
 import static com.popularmovies.data.RequestParams.OVERVIEW;
@@ -27,7 +27,7 @@ public class MovieItem {
 
     public static final String MOVIE_DATA = "movie_data";
 
-    @SerializedName(MOVIE_ID)
+    @SerializedName(ID)
     private long id;
     @SerializedName(POSTER_PATH)
     private String posterPath;

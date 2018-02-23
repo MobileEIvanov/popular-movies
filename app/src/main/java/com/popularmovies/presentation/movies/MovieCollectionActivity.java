@@ -1,4 +1,4 @@
-package com.popularmovies;
+package com.popularmovies.presentation.movies;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -9,12 +9,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.popularmovies.R;
 import com.popularmovies.data.RestClient;
 import com.popularmovies.data.RestDataSource;
 import com.popularmovies.data.models.ConfigurationResponse;
 import com.popularmovies.data.models.MoviesResponse;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
+import com.popularmovies.presentation.AdapterMovieCollection;
+import com.popularmovies.presentation.MovieDetailActivity;
 
 import java.util.List;
 
@@ -30,7 +33,7 @@ import rx.schedulers.Schedulers;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class MovieListActivity extends AppCompatActivity implements AdapterMovieCollection.ICollectionInteraction {
+public class MovieCollectionActivity extends AppCompatActivity implements ContractMoviesScreen.View, AdapterMovieCollection.ICollectionInteraction {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -44,7 +47,7 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
 
         Fresco.initialize(this);
 
-        mBinding= DataBindingUtil.setContentView(this ,R.layout.activity_movie_list);
+        mBinding= DataBindingUtil.setContentView(this , R.layout.activity_movie_list);
 
 
         initToolbar();
@@ -77,7 +80,7 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
 
 
 
-        restDataSource.requestPopularMovies(RestClient.API_KEY,1)
+        restDataSource.requestMoviesByCategory("top_rated",RestClient.API_KEY,1)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<MoviesResponse>() {
@@ -122,6 +125,21 @@ public class MovieListActivity extends AppCompatActivity implements AdapterMovie
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this,imageView , getString(R.string.share_component_list_details));
         startActivity(intent, options.toBundle());
+
+    }
+
+    @Override
+    public void displayMovies(List<MovieItem> movieItemList) {
+
+    }
+
+    @Override
+    public void showEmptyView() {
+
+    }
+
+    @Override
+    public void showErrorMessage(String message) {
 
     }
 }

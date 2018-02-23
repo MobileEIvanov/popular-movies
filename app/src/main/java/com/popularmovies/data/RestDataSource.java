@@ -46,8 +46,9 @@ public class RestDataSource implements QueryRequest {
         return mRequestQuery.requestConfigurations(apiKey);
     }
 
+
     @Override
-    public Observable<MoviesResponse> requestPopularMovies(String apiKey, long page) {
-        return mRequestQuery.requestPopularMovies(apiKey,page);
+    public Observable<MoviesResponse> requestMoviesByCategory(String category, String apiKey, long page ) {
+        return mRequestQuery.requestMoviesByCategory(category,apiKey,page);
     }
 }

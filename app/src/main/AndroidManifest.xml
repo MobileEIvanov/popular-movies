@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MovieListActivity"
+            android:name=".presentation.movies.MovieCollectionActivity"
             android:label="@string/title_movie_list"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,13 +21,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetailActivity"
+            android:name=".presentation.MovieDetailActivity"
             android:label="@string/title_movie_detail"
-            android:parentActivityName=".MovieListActivity"
+            android:parentActivityName=".presentation.movies.MovieCollectionActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.popularmovies.MovieListActivity" />
+                android:value="com.popularmovies.presentation.movies.MovieCollectionActivity" />
         </activity>
     </application>
 
