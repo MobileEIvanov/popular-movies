@@ -2,24 +2,10 @@ package com.popularmovies.data;
 
 import android.util.Log;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
-import com.google.gson.Gson;
 import com.popularmovies.data.models.ConfigurationResponse;
 import com.popularmovies.data.models.MoviesResponse;
 
-import java.io.IOException;
-import java.util.List;
-
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Query;
-import rx.Observable;
+import io.reactivex.Observable;
 
 
 public class RestDataSource implements QueryRequest {
@@ -48,7 +34,7 @@ public class RestDataSource implements QueryRequest {
 
 
     @Override
-    public Observable<MoviesResponse> requestMoviesByCategory(String category, String apiKey, long page ) {
-        return mRequestQuery.requestMoviesByCategory(category,apiKey,page);
+    public Observable<MoviesResponse> requestMoviesByCategory(String category, long page, String apiKey) {
+        return mRequestQuery.requestMoviesByCategory(category, page, apiKey);
     }
 }

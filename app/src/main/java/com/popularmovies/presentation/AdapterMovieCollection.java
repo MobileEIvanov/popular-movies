@@ -15,7 +15,6 @@ import com.popularmovies.entities.MovieItem;
 
 import java.util.List;
 
-import static com.popularmovies.data.RestDataSource.BASE_IMAGE_URL;
 
 /**
  * Created by emil.ivanov on 2/18/18.
@@ -24,11 +23,13 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
 
 
     private List<MovieItem> mData;
-    private ICollectionInteraction mListenerMovieIteraction;
+    private final ICollectionInteraction mListenerMovieInteraction;
+    private final String mImageBaseUrl;
 
-    public AdapterMovieCollection(List<MovieItem> mData, ICollectionInteraction mListenerMovieIteraction) {
-        this.mData = mData;
-        this.mListenerMovieIteraction = mListenerMovieIteraction;
+    public AdapterMovieCollection(List<MovieItem> movieItems, ICollectionInteraction listenerMovieInteraction, String imageBaseUrl) {
+        this.mData = movieItems;
+        this.mListenerMovieInteraction = listenerMovieInteraction;
+        this.mImageBaseUrl = imageBaseUrl;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
             @Override
             public void onClick(View v) {
                 int position = (Integer) v.getTag();
-                mListenerMovieIteraction.onMovieSelected(mData.get(position), mBinding.ivThumbMovie);
+                mListenerMovieInteraction.onMovieSelected(mData.get(position), mBinding.ivThumbMovie);
             }
         };
 
@@ -68,8 +69,8 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
             itemView.setOnClickListener(mClickListener);
         }
 
-        public void bindData(MovieItem movieItem) {
-            Uri uri = Uri.parse(BASE_IMAGE_URL + "w300" + movieItem.getPosterPath());
+        private void bindData(MovieItem movieItem) {
+            Uri uri = Uri.parse(mImageBaseUrl + movieItem.getPosterPath());
             Log.d("Movies adapter", "bindData: " + uri);
             mBinding.ivThumbMovie.setImageURI(uri);
         }

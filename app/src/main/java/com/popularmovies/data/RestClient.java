@@ -2,6 +2,7 @@ package com.popularmovies.data;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
 
@@ -11,7 +12,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-   public static final String API_KEY = "<API_KEY>";
+   public static final String API_KEY = "<YOUR_API_KEY>";
 
 
 
@@ -28,7 +28,7 @@ public class RestClient {
 
         Retrofit retrofitRx = new Retrofit.Builder()
                 .baseUrl(baseURL)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .client(getCustomHeaderWithoutXAuth())
                 .build();

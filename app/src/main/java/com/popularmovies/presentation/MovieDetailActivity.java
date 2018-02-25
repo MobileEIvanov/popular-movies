@@ -1,20 +1,31 @@
 package com.popularmovies.presentation;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewTreeObserver;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.imagepipeline.common.ImageDecodeOptions;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.popularmovies.R;
+import com.popularmovies.data.models.ImageConfiguration;
 import com.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.popularmovies.entities.MovieItem;
 import com.popularmovies.presentation.movies.MovieCollectionActivity;
+import com.popularmovies.utils.UtilsConfiguration;
 
 /**
  * An activity representing a single Movie detail screen. This
@@ -25,32 +36,32 @@ import com.popularmovies.presentation.movies.MovieCollectionActivity;
 public class MovieDetailActivity extends AppCompatActivity {
     ActivityMovieDetailBinding mBinding;
 
+    private MovieItem mMovieItem;
+    private UtilsConfiguration mImageConfig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
 
-        Uri uri = Uri.parse(getIntent().getStringExtra(MovieItem.MOVIE_DATA));
-        mBinding.ivThumbMovie.setImageURI(uri);
-//
-//        ImageDecodeOptions decodeOptions = ImageDecodeOptions.newBuilder()
-//                .build();
-//
-//
-//        ImageRequest request = ImageRequestBuilder
-//                .newBuilderWithSource(uri)
-//                .setImageDecodeOptions(decodeOptions)
-//                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
-//                .setResizeOptions(new ResizeOptions(400,200))
-//                .build();
-//
-//
-//        DraweeController controller = Fresco.newDraweeControllerBuilder()
-//                .setImageRequest(request)
-//                .setControllerListener(mImageListener)
-//                .build();
-//
-//        mBinding.ivThumbMovie.setController(controller);
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
+        mImageConfig = UtilsConfiguration.getInstance(this);
+
+
+
+        mMovieItem = getIntent().getParcelableExtra(MovieItem.MOVIE_DATA);
+
+        populateData();
+
+    }
+
+    private void populateData() {
+        String imagePosterUrl = mImageConfig.getImageBaseURL() + mImageConfig.getImageMaxSize() + mMovieItem.getPosterPath();
+        mBinding.ivThumbMovie.setImageURI(imagePosterUrl);
+
+        mBinding.tvMovieTitle.setText(mMovieItem.getOriginalTitle());
+        mBinding.tvPlotSynopsis.setText(mMovieItem.getOverview());
+        mBinding.tvReleaseDate.setText(mMovieItem.getReleaseDate());
     }
 
     @Override

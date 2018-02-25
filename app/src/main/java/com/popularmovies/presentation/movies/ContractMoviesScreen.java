@@ -1,5 +1,7 @@
 package com.popularmovies.presentation.movies;
 
+import com.popularmovies.data.models.ConfigurationResponse;
+import com.popularmovies.data.models.ImageConfiguration;
 import com.popularmovies.entities.MovieItem;
 
 import java.util.List;
@@ -10,14 +12,21 @@ import java.util.List;
 
 public interface ContractMoviesScreen {
     interface Presenter {
-        void requestMoviesByCategory(String category, long page);
 
         void requestConfigurations();
+
+        void requestMoviesByCategory(String category, long page);
 
         void onStop();
     }
 
     interface View {
+        void storeImageBaseUrlLocally(String imageBaseURL);
+
+        void storeStillImageSizesLocally(List<String> stillImageSizes);
+
+        void onConfigurationRequestFailure();
+
         void displayMovies(List<MovieItem> movieItemList);
 
         void showEmptyView();

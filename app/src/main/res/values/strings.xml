@@ -6,4 +6,11 @@
     <string name="share_component_list_details">movie_image</string>
 
     <string name="api_key_movie_db"></string>
+    <string name="text_dummy_content">Some radnom large text that should be used to show how long this text actually is.</string>
+    <string name="text_dummy_title">Avengers</string>
+    <string name="text_dummy_date">24/12/2018</string>
+    <string name="content_description_header_image">Header movie Image</string>
+    <string name="label_title">Title:</string>
+    <string name="label_release_date">Release date:</string>
+    <string name="label_plot_overview">Plot Overview:</string>
 </resources>

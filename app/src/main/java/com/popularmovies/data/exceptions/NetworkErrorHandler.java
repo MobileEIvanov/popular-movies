@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.popularmovies.data.models.ErrorParser;
 import com.popularmovies.data.models.ErrorResponseObj;
 
@@ -13,7 +14,6 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import okhttp3.ResponseBody;
-import retrofit2.adapter.rxjava.HttpException;
 
 
 public class NetworkErrorHandler {

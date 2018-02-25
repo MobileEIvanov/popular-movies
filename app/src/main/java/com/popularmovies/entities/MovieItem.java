@@ -1,5 +1,8 @@
 package com.popularmovies.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -21,9 +24,9 @@ import static com.popularmovies.data.RequestParams.VOTE_AVERAGE;
 import static com.popularmovies.data.RequestParams.VOTE_COUNT;
 
 /**
- * A dummy item representing a piece of content.
+ * Representation of MovieItem
  */
-public class MovieItem {
+public class MovieItem implements Parcelable {
 
     public static final String MOVIE_DATA = "movie_data";
 
@@ -67,12 +70,39 @@ public class MovieItem {
     @SerializedName(VOTE_AVERAGE)
     private float voteAverage;
 
-    public MovieItem() {
-    }
 
     public MovieItem(String imageUrl) {
         this.posterPath = imageUrl;
     }
+
+    protected MovieItem(Parcel in) {
+        id = in.readLong();
+        posterPath = in.readString();
+        isAdult = in.readByte() != 0;
+        overview = in.readString();
+        releaseDate = in.readString();
+        genreIds = in.createStringArray();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
+        title = in.readString();
+        backdropPath = in.readString();
+        popularity = in.readDouble();
+        voteCount = in.readLong();
+        hasVideo = in.readByte() != 0;
+        voteAverage = in.readFloat();
+    }
+
+    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
+        @Override
+        public MovieItem createFromParcel(Parcel in) {
+            return new MovieItem(in);
+        }
+
+        @Override
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
+        }
+    };
 
     public String getPosterPath() {
         return posterPath;
@@ -81,17 +111,6 @@ public class MovieItem {
     public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
     }
-
-
-    public static List<MovieItem> generateMovies() {
-        List<MovieItem> movieItems = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            movieItems.add(new MovieItem("https://picsum.photos/200/300/?random"));
-        }
-        return movieItems;
-    }
-
 
     public long getId() {
         return id;
@@ -195,5 +214,28 @@ public class MovieItem {
 
     public void setVoteAverage(float voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(posterPath);
+        dest.writeByte((byte) (isAdult ? 1 : 0));
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeStringArray(genreIds);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
+        dest.writeString(title);
+        dest.writeString(backdropPath);
+        dest.writeDouble(popularity);
+        dest.writeLong(voteCount);
+        dest.writeByte((byte) (hasVideo ? 1 : 0));
+        dest.writeFloat(voteAverage);
     }
 }

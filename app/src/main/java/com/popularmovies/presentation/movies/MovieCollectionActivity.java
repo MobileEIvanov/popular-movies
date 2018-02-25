@@ -3,27 +3,25 @@ package com.popularmovies.presentation.movies;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.popularmovies.R;
-import com.popularmovies.data.RestClient;
-import com.popularmovies.data.RestDataSource;
-import com.popularmovies.data.models.ConfigurationResponse;
-import com.popularmovies.data.models.MoviesResponse;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
 import com.popularmovies.presentation.AdapterMovieCollection;
 import com.popularmovies.presentation.MovieDetailActivity;
+import com.popularmovies.utils.UtilsConfiguration;
 
 import java.util.List;
 
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import javax.annotation.Nonnull;
+
 
 /**
  * An activity representing a list of Items. This activity
@@ -35,111 +33,139 @@ import rx.schedulers.Schedulers;
  */
 public class MovieCollectionActivity extends AppCompatActivity implements ContractMoviesScreen.View, AdapterMovieCollection.ICollectionInteraction {
 
+    private static final String TAG = "MovieCollection";
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private ActivityMovieListBinding mBinding;
     private static final int GRID_COLUMN_COUNT = 2;
+    private UtilsConfiguration mImageConfig;
+    private static String DEFAULT_MOVIE_CATEGORY = "top_rated";
+    private static long DEFAULT_COLLECTION_PAGE = 1;
+
+    private PresenterMovieCollection mPresenter;
+    private AdapterMovieCollection mAdapterMovies;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_list);
+
         Fresco.initialize(this);
-
-        mBinding= DataBindingUtil.setContentView(this , R.layout.activity_movie_list);
-
-
         initToolbar();
 
-
-        RestDataSource restDataSource = new RestDataSource();
-
-        restDataSource
-                .requestConfigurations(RestClient.API_KEY)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ConfigurationResponse>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(ConfigurationResponse configurationResponse) {
-                            if(configurationResponse != null){
-
-                            }
-                    }
-                });
-
-
-
-        restDataSource.requestMoviesByCategory("top_rated",RestClient.API_KEY,1)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MoviesResponse>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(MoviesResponse moviesResponse) {
-                            if(moviesResponse!=null && moviesResponse.getMovieItems()!=null && moviesResponse.getMovieItems().size()>0){
-                                setupRecyclerView(moviesResponse.getMovieItems());
-                            }
-                    }
-                });
+        mPresenter = new PresenterMovieCollection(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadScreenData();
+    }
 
-    private void initToolbar(){
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mPresenter != null) {
+            mPresenter.onStop();
+        }
+    }
+
+    private void loadScreenData() {
+        mImageConfig = UtilsConfiguration.getInstance(this);
+        if (mImageConfig.getImageBaseURL() != null && mImageConfig.getImageMinSize() != null) {
+            mPresenter.requestMoviesByCategory(DEFAULT_MOVIE_CATEGORY, DEFAULT_COLLECTION_PAGE);
+        } else {
+            mPresenter.requestConfigurations();
+        }
+    }
+
+    private void initToolbar() {
 
         setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setTitle(getTitle());
     }
 
+    /**
+     * Setup adapter and load the current movie collection.
+     *
+     * @param movieItemList - movie list retrieved
+     * @param imagesBaseUrl - the base url used to load images content
+     */
+    private void setupRecyclerView(@Nonnull List<MovieItem> movieItemList, String imagesBaseUrl) {
 
-    private void setupRecyclerView(List<MovieItem> movieItemList) {
-        mBinding.layoutMovieList.movieList.setLayoutManager(new GridLayoutManager(this, GRID_COLUMN_COUNT));
-        mBinding.layoutMovieList.movieList.setAdapter(new AdapterMovieCollection(movieItemList,this));
+        if (mAdapterMovies == null) {
+            mAdapterMovies = new AdapterMovieCollection(movieItemList, this, imagesBaseUrl);
+            mBinding.layoutMovieList.movieList.setLayoutManager(new GridLayoutManager(this, GRID_COLUMN_COUNT));
+            mBinding.layoutMovieList.movieList.setAdapter(mAdapterMovies);
+        } else {
+            mAdapterMovies.updateCollection(movieItemList);
+        }
     }
 
 
     @Override
     public void onMovieSelected(MovieItem movieItem, View imageView) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
+
+
+
         // Pass data object in the bundle and populate details activity.
-        intent.putExtra(MovieItem.MOVIE_DATA, movieItem.getPosterPath());
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this,imageView , getString(R.string.share_component_list_details));
-        startActivity(intent, options.toBundle());
+
+        intent.putExtra(MovieItem.MOVIE_DATA, movieItem);
+//        ActivityOptionsCompat options = ActivityOptionsCompat.
+//                makeSceneTransitionAnimation(this, imageView, getString(R.string.share_component_list_details));
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void storeImageBaseUrlLocally(String imageBaseURL) {
+        boolean isSuccess = mImageConfig.storeImageBaseURL(imageBaseURL);
+        if (isSuccess) {
+            mPresenter.requestMoviesByCategory(DEFAULT_MOVIE_CATEGORY, DEFAULT_COLLECTION_PAGE);
+        } else {
+            showEmptyView();
+        }
+    }
+
+    @Override
+    public void storeStillImageSizesLocally(List<String> stillImageSizes) {
+        for (int i = 0; i < stillImageSizes.size(); i++) {
+            mImageConfig.storeAllowedStillSize(i, stillImageSizes.get(i));
+        }
+    }
+
+    @Override
+    public void onConfigurationRequestFailure() {
 
     }
 
     @Override
     public void displayMovies(List<MovieItem> movieItemList) {
+        if (mImageConfig.getImageBaseURL() == null) {
+            showEmptyView();
+            return;
+        }
 
+        if (mImageConfig.getImageMediumSize() == null) {
+            return;
+        }
+
+        String imageBaseUrl = mImageConfig.getImageBaseURL() + "/" + mImageConfig.getImageMediumSize();
+        Log.d(TAG, "displayMovies: " + imageBaseUrl);
+        setupRecyclerView(movieItemList, imageBaseUrl);
     }
 
     @Override
     public void showEmptyView() {
-
+        // TODO: 2/25/18 Show empty view
     }
 
     @Override
     public void showErrorMessage(String message) {
-
+        Snackbar.make(mBinding.getRoot(), message, Snackbar.LENGTH_LONG).show();
     }
 }
