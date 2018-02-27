@@ -13,4 +13,9 @@
     <string name="label_title">Title:</string>
     <string name="label_release_date">Release date:</string>
     <string name="label_plot_overview">Plot Overview:</string>
+    <string name="message_no_connection">Oops ... Please check you connection.</string>
+    <string name="message_empty_list">Sorry... There is no data here ...</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="label_top_rated">Top Rated</string>
+    <string name="label_popular">Most Popular</string>
 </resources>

@@ -31,7 +31,18 @@
 
             <include
                 android:id="@+id/layout_movie_list"
-                layout="@layout/movie_list" />
+                layout="@layout/movie_list"
+                android:visibility="invisible"/>
+
+            <include
+                android:id="@+id/layout_no_connection"
+                layout="@layout/layout_no_connection"
+                android:visibility="invisible" />
+
+            <include
+                android:id="@+id/empty_list"
+                layout="@layout/layout_empty_list"
+                android:visibility="invisible" />
         </FrameLayout>
 
 

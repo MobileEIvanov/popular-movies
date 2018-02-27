@@ -1,12 +1,16 @@
 package com.popularmovies.presentation;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Animatable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +43,42 @@ public class MovieDetailActivity extends AppCompatActivity {
     private MovieItem mMovieItem;
     private UtilsConfiguration mImageConfig;
 
+    private IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+
+
+    BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final ConnectivityManager connMgr;
+            connMgr = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            final android.net.NetworkInfo wifi = connMgr
+                    .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            final android.net.NetworkInfo mobile = connMgr
+                    .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+
+            if (wifi.isAvailable() || mobile.isAvailable()) {
+
+                if (wifi.isConnected() || mobile.isConnected()) {
+
+                    mBinding.layoutNoConnection.getRoot().setVisibility(View.INVISIBLE);
+                    mBinding.contentDetails.setVisibility(View.VISIBLE);
+
+
+                } else {
+                    mBinding.layoutNoConnection.getRoot().setVisibility(View.VISIBLE);
+                    mBinding.contentDetails.setVisibility(View.INVISIBLE);
+
+                }
+            }
+
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +88,25 @@ public class MovieDetailActivity extends AppCompatActivity {
         mImageConfig = UtilsConfiguration.getInstance(this);
 
 
-
         mMovieItem = getIntent().getParcelableExtra(MovieItem.MOVIE_DATA);
 
         populateData();
 
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.registerReceiver(mConnectionReceiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.unregisterReceiver(mConnectionReceiver);
+    }
+
 
     private void populateData() {
         String imagePosterUrl = mImageConfig.getImageBaseURL() + mImageConfig.getImageMaxSize() + mMovieItem.getPosterPath();
@@ -71,7 +124,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-  BaseControllerListener<ImageInfo> mImageListener = new BaseControllerListener<ImageInfo>() {
+    BaseControllerListener<ImageInfo> mImageListener = new BaseControllerListener<ImageInfo>() {
 
         @Override
         public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
@@ -95,7 +148,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     };
 
-    /** https://guides.codepath.com/android/shared-element-activity-transition
+    /**
+     * https://guides.codepath.com/android/shared-element-activity-transition
      * Schedules the shared element transition to be started immediately
      * after the shared element has been measured and laid out within the
      * activity's view hierarchy. Some common places where it might make

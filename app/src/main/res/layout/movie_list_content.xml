@@ -5,8 +5,8 @@
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_thumb_movie"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
         fresco:actualImageScaleType="centerCrop" />
 
 </layout>
