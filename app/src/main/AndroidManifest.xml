@@ -10,13 +10,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppThemeColdStart">
         <activity
+
             android:name=".presentation.movies.MovieCollectionActivity"
-            android:label="@string/title_movie_list"
-            android:theme="@style/AppTheme.NoActionBar">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +23,9 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".presentation.MovieDetailActivity"
-            android:label="@string/title_movie_detail"
-            android:parentActivityName=".presentation.movies.MovieCollectionActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".presentation.movies.MovieCollectionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.popularmovies.presentation.movies.MovieCollectionActivity" />

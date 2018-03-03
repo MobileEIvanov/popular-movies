@@ -6,14 +6,14 @@ import android.content.SharedPreferences;
 import com.popularmovies.data.models.ImageConfiguration;
 
 /**
- * Created by emil ivanov on 2/25/18.
+ * Created by emil.ivanov on 2/25/18.
  */
 
 public class UtilsConfiguration {
 
     private static final String PREFERENCE_NAME = "image_config";
     private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
+    private final SharedPreferences.Editor mEditor;
 
     private static final String IMAGE_BASE_URL = "image_base_url";
     private static final String IMAGE_MIN_SIZE = "image_min_size";
@@ -110,8 +110,19 @@ public class UtilsConfiguration {
 
 
     /**
+     * Store user selection for collection items
+     * @param movieCategory - current selected category
+     * @param currentPage - currently loaded page
+     */
+    public void storeCurrentUserSelection(String movieCategory, long currentPage){
+        mEditor.putString(CURRENT_MOVIE_CATEGORY, movieCategory);
+        mEditor.putLong(CURRENT_COLLECTION_PAGE, currentPage);
+        mEditor.apply();
+    }
+
+    /**
      * Store user selected movie category
-     * @param category
+     * @param category - current selected user category
      */
     public void storeCurrentCategory(String category) {
         mEditor.putString(CURRENT_MOVIE_CATEGORY, category);

@@ -5,13 +5,14 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 
 /**
- * Created by user on 2/27/18.
+ * Created by emil.ivanov on 2/27/18.
+ * The solution is based on this post:
+ * https://stackoverflow.com/questions/41132475/translation-animation-starts-off-screen-instead-of-where-it-belongs
  */
 
 public class UtilsAnimations {
 
 
-    // TODO: 2/27/18 GIVE CREDIT FOR THIS IMPLEMENTATION
     public static void createCircularReveal(View container) {
 
         if (!container.isAttachedToWindow()) {

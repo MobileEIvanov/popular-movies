@@ -1,21 +1,20 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="title_movie_list">Movies </string>
-    <string name="title_movie_detail">Movie Detail</string>
-
     <string name="share_component_list_details">movie_image</string>
 
-    <string name="api_key_movie_db"></string>
     <string name="text_dummy_content">Some radnom large text that should be used to show how long this text actually is.</string>
     <string name="text_dummy_title">Avengers</string>
     <string name="text_dummy_date">24/12/2018</string>
     <string name="content_description_header_image">Header movie Image</string>
-    <string name="label_title">Title:</string>
+    <string name="label_title">Title (original):</string>
     <string name="label_release_date">Release date:</string>
     <string name="label_plot_overview">Plot Overview:</string>
-    <string name="message_no_connection">Oops ... Please check you connection.</string>
-    <string name="message_empty_list">Sorry... There is no data here ...</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="message_no_connection">Oops… Please check you connection.</string>
+    <string name="message_empty_list">Sorry… There is no data here…</string>
     <string name="label_top_rated">Top Rated</string>
     <string name="label_popular">Most Popular</string>
+    <string name="text_dummy_rating">7.4</string>
+    <string name="message_movie_data_failure">Could not load movie data. Please try again.</string>
+    <string name="text_empty_data_item">Not available</string>
+    <string name="content_description_movie_poster">Movie poster</string>
 </resources>

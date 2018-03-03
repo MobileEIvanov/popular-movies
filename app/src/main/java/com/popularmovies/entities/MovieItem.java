@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.popularmovies.data.RequestParams.ADULT;
 import static com.popularmovies.data.RequestParams.BACKGROP_PATH;
@@ -71,10 +69,6 @@ public class MovieItem implements Parcelable {
     private float voteAverage;
 
 
-    public MovieItem(String imageUrl) {
-        this.posterPath = imageUrl;
-    }
-
     protected MovieItem(Parcel in) {
         id = in.readLong();
         posterPath = in.readString();
@@ -113,7 +107,7 @@ public class MovieItem implements Parcelable {
     }
 
     public long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(long id) {

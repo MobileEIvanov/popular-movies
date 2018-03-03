@@ -1,5 +1,7 @@
 package com.popularmovies.presentation.movies;
 
+import android.util.Log;
+
 import com.popularmovies.data.RestClient;
 import com.popularmovies.data.RestDataSource;
 import com.popularmovies.data.models.ConfigurationResponse;
@@ -15,49 +17,71 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by emil ivanov on 2/23/18.
+ * Created by emil.ivanov on 2/23/18.
  */
 
 public class PresenterMovieCollection implements Presenter {
 
-    private ContractMoviesScreen.View mView;
+    private final ContractMoviesScreen.View mView;
 
-    private CompositeDisposable mCompositeDisposable;
+    private final CompositeDisposable mCompositeDisposable;
+    private Disposable mDisplosableMovies;
+    private Disposable mDisplosableConfig;
 
-    public PresenterMovieCollection(ContractMoviesScreen.View view) {
+     PresenterMovieCollection(ContractMoviesScreen.View view) {
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
-
     }
 
 
     @Override
     public void requestConfigurations() {
+        mView.showProgressLoader();
         RestDataSource restDataSource = new RestDataSource();
-        Disposable disposableConfig = restDataSource.requestConfigurations(RestClient.API_KEY)
+        mDisplosableConfig = restDataSource.requestConfigurations(RestClient.API_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onSuccessConfigurations, onFailureConfigurations);
 
-        mCompositeDisposable.add(disposableConfig);
+        mCompositeDisposable.add(mDisplosableConfig);
     }
 
     @Override
     public void requestMoviesByCategory(String category, long page) {
+        mView.showProgressLoader();
         RestDataSource restDataSource = new RestDataSource();
-        Disposable disposableMovies = restDataSource.requestMoviesByCategory(category, page, RestClient.API_KEY )
+        mDisplosableMovies = restDataSource.requestMoviesByCategory(category, page, RestClient.API_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onSuccessMoviesResponse, onFailureMoviesResponse);
 
-        mCompositeDisposable.add(disposableMovies);
+        mCompositeDisposable.add(mDisplosableMovies);
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("Presenter: ", "onResume: Called");
+        if (mCompositeDisposable != null) {
+            if (mDisplosableMovies != null && mDisplosableMovies.isDisposed()) {
+                mCompositeDisposable.add(mDisplosableMovies);
+            }
+            if (mDisplosableConfig != null && mDisplosableConfig.isDisposed()) {
+                mCompositeDisposable.add(mDisplosableConfig);
+            }
+        }
     }
 
 
     @Override
     public void onStop() {
-        if (mCompositeDisposable != null && !mCompositeDisposable.isDisposed()) {
-            mCompositeDisposable.dispose();
+        Log.d("Presenter ", "onStop: CALLED ");
+        if (mCompositeDisposable != null) {
+            if (mDisplosableMovies != null && mDisplosableMovies.isDisposed()) {
+                mCompositeDisposable.remove(mDisplosableMovies);
+            }
+            if (mDisplosableConfig != null && mDisplosableConfig.isDisposed()) {
+                mCompositeDisposable.remove(mDisplosableConfig);
+            }
         }
     }
 
@@ -87,6 +111,7 @@ public class PresenterMovieCollection implements Presenter {
         @Override
         public void accept(Throwable throwable) throws Exception {
             mView.onConfigurationRequestFailure();
+            mView.hideProgressLoader();
         }
     };
 
@@ -98,6 +123,7 @@ public class PresenterMovieCollection implements Presenter {
             } else {
                 mView.showEmptyView();
             }
+            mView.hideProgressLoader();
         }
     };
 
@@ -105,9 +131,10 @@ public class PresenterMovieCollection implements Presenter {
         @Override
         public void accept(Throwable throwable) throws Exception {
             if (throwable.getMessage() != null) {
-                mView.showErrorMessage(throwable.getLocalizedMessage());
+                mView.showErrorMessage(throwable.getMessage());
             }
             mView.showEmptyView();
+            mView.hideProgressLoader();
         }
     };
 

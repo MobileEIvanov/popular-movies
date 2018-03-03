@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_movie_detail">
+
+
+    <FrameLayout
+        android:id="@+id/fl_rating_container"
+        android:layout_width="@dimen/dimen_rating_view"
+        android:layout_height="@dimen/dimen_rating_view"
+        android:background="@drawable/rating_medium_circle_background"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/tv_movie_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="16dp"
+            android:textColor="@color/font_white"
+            android:textSize="@dimen/dimen_rating_font_size"
+            android:textStyle="bold|italic"
+            tools:text="@string/text_dummy_rating" />
+    </FrameLayout>
+</layout>

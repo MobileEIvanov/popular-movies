@@ -9,14 +9,12 @@ import io.reactivex.Observable;
 
 
 public class RestDataSource implements QueryRequest {
-    public  static  final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
-    String BASE_API_URL = "https://api.themoviedb.org/";
-    String API_VERSION = "3";
-//    https://api.themoviedb.org/3/movie/550?api_key=d697cb5b08dda13f992c27272775af90
+    private static final String BASE_API_URL = "https://api.themoviedb.org/";
+    private static final String API_VERSION = "3";
 
 
 
-    QueryRequest mRequestQuery;
+    private final QueryRequest mRequestQuery;
     public RestDataSource() {
         StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(BASE_API_URL)

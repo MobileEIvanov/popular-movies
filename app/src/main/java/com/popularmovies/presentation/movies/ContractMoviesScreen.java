@@ -1,21 +1,21 @@
 package com.popularmovies.presentation.movies;
 
-import com.popularmovies.data.models.ConfigurationResponse;
-import com.popularmovies.data.models.ImageConfiguration;
 import com.popularmovies.entities.MovieItem;
 
 import java.util.List;
 
 /**
- * Created by user on 2/23/18.
+ * Created by emil.ivanov on 2/23/18.
  */
 
-public interface ContractMoviesScreen {
+interface ContractMoviesScreen {
     interface Presenter {
 
         void requestConfigurations();
 
         void requestMoviesByCategory(String category, long page);
+
+        void onResume();
 
         void onStop();
     }
@@ -32,6 +32,10 @@ public interface ContractMoviesScreen {
         void showEmptyView();
 
         void showErrorMessage(String message);
+
+        void showProgressLoader();
+
+        void hideProgressLoader();
 
     }
 }

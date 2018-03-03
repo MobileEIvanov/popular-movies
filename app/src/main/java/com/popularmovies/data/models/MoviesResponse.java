@@ -28,35 +28,10 @@ public class MoviesResponse {
     @SerializedName(RESULTS)
     private List<MovieItem> movieItems;
 
-    public long getTotalResults() {
-        return totalResults;
-    }
-
-    public void setTotalResults(long totalResults) {
-        this.totalResults = totalResults;
-    }
-
-    public long getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(long totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public long getPageNumber() {
-        return pageNumber;
-    }
-
-    public void setPageNumber(long pageNumber) {
-        this.pageNumber = pageNumber;
-    }
 
     public List<MovieItem> getMovieItems() {
         return movieItems;
     }
 
-    public void setMovieItems(List<MovieItem> movieItems) {
-        this.movieItems = movieItems;
-    }
+
 }
