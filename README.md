@@ -19,10 +19,10 @@ The project follows the general coding style for Java and Android.
 
 ## Built With
 
-*[Retrofit2](http://square.github.io/retrofit/) - Networking library from Square
-*[JakeWharton's RxJava2 for Android](https://github.com/ReactiveX/RxAndroid) - Reactive solution for Android framework
-*[Picasso](http://square.github.io/picasso/) - Image processing library
-*[Stetho Logger](http://facebook.github.io/stetho/) - Debug bridge from Facebook. Used for network request debugging.
+* [Retrofit2](http://square.github.io/retrofit/) - Networking library from Square
+* [JakeWharton's RxJava2 for Android](https://github.com/ReactiveX/RxAndroid) - Reactive solution for Android framework
+* [Picasso](http://square.github.io/picasso/) - Image processing library
+* [Stetho Logger](http://facebook.github.io/stetho/) - Debug bridge from Facebook. Used for network request debugging.
 
 ## Contributing
 
@@ -41,6 +41,6 @@ Please read [CONTRIBUTING.md] for details on our code of conduct, and the proces
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](popular-movies/LICENSE) file for details
 
 
