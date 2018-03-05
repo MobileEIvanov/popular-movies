@@ -30,7 +30,7 @@ Please read [CONTRIBUTING.md] for details on our code of conduct, and the proces
 
 ## Authors
 
-* **EIvanov** - *Initial work*
+* **[EIvanov](https://github.com/MobileEIvanov)** - *Initial work*
 
 ## Acknowledgments
 
