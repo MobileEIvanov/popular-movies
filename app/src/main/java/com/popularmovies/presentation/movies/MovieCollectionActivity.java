@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +23,9 @@ import com.facebook.stetho.Stetho;
 import com.popularmovies.R;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
-import com.popularmovies.presentation.MovieDetailActivity;
+import com.popularmovies.presentation.details.MovieDetailActivity;
+import com.popularmovies.utils.EqualSpacingItemDecoration;
+import com.popularmovies.utils.GridSpacingItemDecoration;
 import com.popularmovies.utils.UtilsAnimations;
 import com.popularmovies.utils.UtilsConfiguration;
 import com.popularmovies.utils.UtilsGrid;
@@ -230,6 +233,7 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
             mAdapterMovies = new AdapterMovieCollection(this, movieItemList, this, imagesBaseUrl);
             mBinding.layoutMovieList.movieList.setLayoutManager(new GridLayoutManager(this, columnSize));
             mBinding.layoutMovieList.movieList.setAdapter(mAdapterMovies);
+            mBinding.layoutMovieList.movieList.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.VERTICAL));
         } else {
             if (mUtilsConfig.getCurrentCollectionPage() > 1) {
                 mAdapterMovies.addItemsCollection(movieItemList);

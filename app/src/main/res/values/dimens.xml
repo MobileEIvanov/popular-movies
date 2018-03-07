@@ -8,6 +8,6 @@
     <dimen name="dimen_movie_title_original">18sp</dimen>
     <dimen name="dimen_movie_release_date">14sp</dimen>
     <dimen name="dimen_label">16sp</dimen>
-    <dimen name="dimen_poster_thumb_height">240dp</dimen>
+    <dimen name="dimen_poster_thumb_height">200dp</dimen>
     <dimen name="dimen_movie_overview">16sp</dimen>
 </resources>

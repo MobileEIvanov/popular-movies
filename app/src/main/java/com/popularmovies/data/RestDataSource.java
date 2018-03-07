@@ -3,7 +3,9 @@ package com.popularmovies.data;
 import android.util.Log;
 
 import com.popularmovies.data.models.ConfigurationResponse;
+import com.popularmovies.data.models.MovieReviewsResponse;
 import com.popularmovies.data.models.MoviesResponse;
+import com.popularmovies.data.models.MoviesVideoResponse;
 
 import io.reactivex.Observable;
 
@@ -13,8 +15,8 @@ public class RestDataSource implements QueryRequest {
     private static final String API_VERSION = "3";
 
 
-
     private final QueryRequest mRequestQuery;
+
     public RestDataSource() {
         StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(BASE_API_URL)
@@ -35,4 +37,16 @@ public class RestDataSource implements QueryRequest {
     public Observable<MoviesResponse> requestMoviesByCategory(String category, long page, String apiKey) {
         return mRequestQuery.requestMoviesByCategory(category, page, apiKey);
     }
+
+    @Override
+    public Observable<MovieReviewsResponse> requestMovieReviews(long id, String apiKey) {
+        return mRequestQuery.requestMovieReviews(id, apiKey);
+    }
+
+    @Override
+    public Observable<MoviesVideoResponse> requestMovieVideos(long id, String apiKey) {
+        return mRequestQuery.requestMovieVideos(id, apiKey);
+    }
+
+
 }

@@ -1,12 +1,18 @@
-package com.popularmovies.presentation;
+package com.popularmovies.presentation.details;
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -14,16 +20,31 @@ import android.widget.Toast;
 
 
 import com.popularmovies.R;
+import com.popularmovies.data.RestClient;
+import com.popularmovies.data.RestDataSource;
+import com.popularmovies.data.models.MovieReviewsResponse;
+import com.popularmovies.data.models.MoviesResponse;
+import com.popularmovies.data.models.MoviesVideoResponse;
 import com.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.popularmovies.entities.MovieItem;
+import com.popularmovies.entities.MovieReview;
+import com.popularmovies.entities.MovieVideo;
+import com.popularmovies.utils.EqualSpacingItemDecoration;
+import com.popularmovies.utils.GridSpacingItemDecoration;
 import com.popularmovies.utils.UtilsConfiguration;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * An activity representing a single {@link MovieItem} detail screen.
  */
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements ContractMovieDetails.View, AdapterMovieVideos.ICollectionVideosInteraction, AdapterMovieReviews.ICollectionReviewInteraction {
 
     private static final float RATING_BAR_LOW = 5.0f;
     private static final float RATING_BAR_HIGH = 7.0f;
@@ -40,7 +61,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private UtilsConfiguration mImageConfig;
 
     private final IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-
+    private PresenterMovieDetails mPresenter;
 
     private final BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
         @Override
@@ -79,7 +100,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -100,6 +120,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (mMovieItem != null) {
             setActionBarTitle(mMovieItem.getTitle());
         }
+
+
+        mPresenter = new PresenterMovieDetails(this);
+        mPresenter.requestMovieVideos(mMovieItem.getId());
+        mPresenter.requestMovieReviews(mMovieItem.getId());
+
 
     }
 
@@ -216,7 +242,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         String imagePosterUrl = mImageConfig.getImageBaseURL() + mImageConfig.getImageMaxSize() + mMovieItem.getPosterPath();
 
-        Picasso.with(this).load(imagePosterUrl).fit().noFade().into(mBinding.ivThumbMovie, new Callback() {
+        Picasso.with(this).load(imagePosterUrl)
+                // TODO: 3/5/18  Add placeholder image and on Error
+//                .placeholder(R.drawable.user_placeholder)
+//                .error(R.drawable.user_placeholder_error)
+                .fit().noFade().into(mBinding.ivThumbMovie, new Callback() {
             @Override
             public void onSuccess() {
                 if (isInitialLoad) {
@@ -257,4 +287,61 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void displayVideos(List<MovieVideo> movieVideos) {
+        AdapterMovieVideos adapterMovieVideos = new AdapterMovieVideos(this, movieVideos, this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mBinding.rvMovieVideos.setLayoutManager(layoutManager);
+        mBinding.rvMovieVideos.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
+        mBinding.rvMovieVideos.setAdapter(adapterMovieVideos);
+    }
+
+    @Override
+    public void displayReviews(List<MovieReview> movieReviews) {
+        AdapterMovieReviews adapterMovieReviews = new AdapterMovieReviews(this, movieReviews, this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mBinding.rvMovieReviews.setLayoutManager(layoutManager);
+        mBinding.rvMovieReviews.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
+
+        mBinding.rvMovieReviews.setAdapter(adapterMovieReviews);
+
+
+    }
+
+    @Override
+    public void displayEmptyVideos() {
+
+    }
+
+    @Override
+    public void displayEmptyReviews() {
+
+    }
+
+    @Override
+    public void onVideoSelected(MovieVideo videoItem) {
+
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoItem.getVideoKey()));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + videoItem.getVideoKey()));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
+
+
+        Snackbar.make(mBinding.getRoot(), "Video: " + videoItem.getName(), Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onReviewSelected(MovieReview movieReviewItem) {
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewItem.getUrl()));
+        startActivity(webIntent);
+    }
+
+    @Override
+    public void onLoadMore() {
+
+    }
 }

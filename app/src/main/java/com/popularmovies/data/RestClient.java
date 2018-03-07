@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-    public static final String API_KEY = "<API_KEY>";
+    public static final String API_KEY = "API_KEY";
 
 
     static QueryRequest initConnection(String baseURL) {

@@ -24,7 +24,7 @@
         </activity>
         <activity
 
-            android:name=".presentation.MovieDetailActivity"
+            android:name=".presentation.details.MovieDetailActivity"
             android:parentActivityName=".presentation.movies.MovieCollectionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

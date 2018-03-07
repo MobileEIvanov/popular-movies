@@ -3,7 +3,7 @@ package com.popularmovies.data;
 public interface RequestParams {
 
     String API_KEY = "api_key";
-    String MOVIE_CATEGORY ="category";
+    String MOVIE_CATEGORY = "category";
     String MOVIE_ID = "movie_id";
 
     //        Configurations
@@ -42,4 +42,23 @@ public interface RequestParams {
     String TOTAL_PAGES = "total_pages";
 
 
+
+
+    // Movie Videos
+    String VIDEO_ID = "id";
+    String VIDEO_ISO_639_1 = "iso_639_1";
+    String VIDEO_ISO_3166_1 = "iso_3166_1";
+    String VIDEO_KEY = "key";
+    String VIDEO_SITE = "site";
+    String VIDEO_SIZE = "size";
+    String VIDEO_TYPE = "type";
+
+    // Movie Review params
+    String REVIEW_ID = "id";
+    String REVIEW_AUTHOR = "author";
+    String REVIEW_CONTENT = "content";
+    String REVIEW_URL = "url";
+
+
+    String VIDEO_NAME = "name";
 }

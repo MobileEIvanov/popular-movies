@@ -26,11 +26,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+
                 <ImageView
                     android:id="@+id/iv_thumb_movie"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/dimen_poster_thumb_height"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
                     android:contentDescription="@string/content_description_header_image"
+                    android:elevation="16dp"
                     android:scaleType="fitXY"
                     android:transitionName="@string/share_component_list_details"
                     app:layout_constraintDimensionRatio="h,4:3"
@@ -43,10 +47,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
                     android:text="@string/label_title"
                     app:layout_constraintStart_toEndOf="@+id/iv_thumb_movie"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/iv_thumb_movie" />
 
                 <TextView
                     android:id="@+id/tv_movie_title_original"
@@ -89,14 +92,28 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_label_date"
                     tools:text="@string/text_dummy_date" />
 
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_movie_videos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/main_content_videos"
+                    android:elevation="16dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_thumb_movie" />
+
+
                 <TextView
                     android:id="@+id/tv_label_plot"
                     style="@style/MovieDetailsLabel"
+
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/label_plot_overview"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_thumb_movie" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_movie_videos" />
 
                 <TextView
                     android:id="@+id/tv_plot_synopsis"
@@ -112,6 +129,30 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_label_plot"
                     tools:text="@string/text_dummy_content" />
 
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_movie_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/main_content_videos"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_plot_synopsis" />
+                <FrameLayout
+                    android:id="@+id/fl_reviews"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/reviews_circle_background">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_play_circle_outline_white_48dp" />
+                </FrameLayout>
             </android.support.constraint.ConstraintLayout>
         </FrameLayout>
     </ScrollView>

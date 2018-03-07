@@ -2,7 +2,9 @@ package com.popularmovies.data;
 
 
 import com.popularmovies.data.models.ConfigurationResponse;
+import com.popularmovies.data.models.MovieReviewsResponse;
 import com.popularmovies.data.models.MoviesResponse;
+import com.popularmovies.data.models.MoviesVideoResponse;
 
 
 import io.reactivex.Observable;
@@ -18,6 +20,8 @@ public interface QueryRequest {
 
     String URL_CONFIGURATIONS = "configuration";
     String URL_MOVIES_BY_CATEGORY = "movie/{category}";
+    String URL_MOVIE_REVIEWS = "movie/{id}/reviews";
+    String URL_MOVIE_VIDEOS = "movie/{id}/videos";
 
     @GET(URL_CONFIGURATIONS)
     Observable<ConfigurationResponse> requestConfigurations(@Query(RequestParams.API_KEY) String apiKey);
@@ -27,5 +31,12 @@ public interface QueryRequest {
                                                        @Query(RequestParams.PAGE) long page,
                                                        @Query(RequestParams.API_KEY) String apiKey);
 
+    @GET(URL_MOVIE_REVIEWS)
+    Observable<MovieReviewsResponse> requestMovieReviews(@Path(RequestParams.ID) long id,
+                                                         @Query(RequestParams.API_KEY) String apiKey);
+
+    @GET(URL_MOVIE_VIDEOS)
+    Observable<MoviesVideoResponse> requestMovieVideos(@Path(RequestParams.ID) long id,
+                                                       @Query(RequestParams.API_KEY) String apiKey);
 
 }

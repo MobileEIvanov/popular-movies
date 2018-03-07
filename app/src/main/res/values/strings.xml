@@ -17,4 +17,6 @@
     <string name="message_movie_data_failure">Could not load movie data. Please try again.</string>
     <string name="text_empty_data_item">Not available</string>
     <string name="content_description_movie_poster">Movie poster</string>
+    <string name="label_videos">Videos</string>
+    <string name="label_read_more">Read more...</string>
 </resources>

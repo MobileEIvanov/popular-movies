@@ -8,8 +8,6 @@
         android:name="com.popularmovies.MovieListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:transitionName="@string/share_component_list_details"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.popularmovies.presentation.movies.MovieCollectionActivity"
