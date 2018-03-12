@@ -2,6 +2,9 @@
 
 This project resolves the decade long problem when you sit at home and wonder what to watch. 
 
+
+<img src="screens/Screen-MovieCollection-port.png" width="50%" height="50%"><img src="screens/Screen-MovieDetails_port.png" width="50%" height="50%"><img src="screens/Screen-collection-land.png" width="50%" height="50%"><img src="screens/Screen-Details-land.png" width="50%" height="50%">
+
 ## Project Architecture
 
 The project is build following the **Model-View-Presenter** Architecture and uses repository pattern for its data layer.
