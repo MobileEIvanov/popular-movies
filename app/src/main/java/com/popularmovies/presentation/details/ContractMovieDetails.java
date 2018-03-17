@@ -1,5 +1,6 @@
 package com.popularmovies.presentation.details;
 
+import com.popularmovies.entities.MovieItem;
 import com.popularmovies.entities.MovieReview;
 import com.popularmovies.entities.MovieVideo;
 
@@ -19,9 +20,17 @@ public interface ContractMovieDetails {
         void requestMovieVideos(long movieId);
 
         void requestMovieReviews(long movieId);
+
+        void requestMovieDetails(MovieItem movieItem);
+
+        void requestChangeFavoriteStatus(MovieItem movieItem);
+
     }
 
     interface View {
+
+        void displayMovieDetails(MovieItem movieItem);
+
         void displayVideos(List<MovieVideo> movieVideos);
 
         void displayReviews(List<MovieReview> movieReviews);

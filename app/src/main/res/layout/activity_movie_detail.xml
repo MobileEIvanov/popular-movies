@@ -2,29 +2,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/main_content">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <include
+            android:id="@+id/layout_no_connection"
+            layout="@layout/layout_no_connection"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:visibility="invisible" />
 
-            <include
-                android:id="@+id/layout_no_connection"
-                layout="@layout/layout_no_connection"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:visibility="invisible" />
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/main_content">
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/content_details"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
 
                 <ImageView
@@ -34,12 +33,25 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:contentDescription="@string/content_description_header_image"
-                    android:elevation="16dp"
                     android:scaleType="fitXY"
+                    android:elevation="8dp"
                     android:transitionName="@string/share_component_list_details"
                     app:layout_constraintDimensionRatio="h,4:3"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/layout_rating_view"
+                    layout="@layout/layout_rating_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_thumb_movie"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_thumb_movie" />
+
 
                 <TextView
                     android:id="@+id/tv_label_title"
@@ -61,17 +73,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_label_title"
                     tools:text="@string/text_dummy_title" />
 
-                <include
-                    android:id="@+id/layout_rating_view"
-                    layout="@layout/layout_rating_view"
-
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_thumb_movie"
-                    app:layout_constraintEnd_toEndOf="@+id/iv_thumb_movie" />
-
 
                 <TextView
                     android:id="@+id/tv_label_date"
@@ -92,18 +93,26 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_label_date"
                     tools:text="@string/text_dummy_date" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_movie_videos"
+
+                <FrameLayout
+                    android:id="@+id/fl_movie_videos"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="140dp"
                     android:layout_marginTop="16dp"
                     android:background="@color/main_content_videos"
-                    android:elevation="16dp"
-                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_thumb_movie" />
+                    app:layout_constraintTop_toBottomOf="@+id/iv_thumb_movie">
 
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_movie_videos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:elevation="16dp"
+                        android:orientation="horizontal"
+                        android:visibility="invisible" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tv_label_plot"
@@ -113,7 +122,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/label_plot_overview"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rv_movie_videos" />
+                    app:layout_constraintTop_toBottomOf="@+id/fl_movie_videos" />
 
                 <TextView
                     android:id="@+id/tv_plot_synopsis"
@@ -130,7 +139,6 @@
                     tools:text="@string/text_dummy_content" />
 
 
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_movie_reviews"
                     android:layout_width="match_parent"
@@ -141,19 +149,19 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_plot_synopsis" />
-                <FrameLayout
-                    android:id="@+id/fl_reviews"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/reviews_circle_background">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_play_circle_outline_white_48dp" />
-                </FrameLayout>
+
             </android.support.constraint.ConstraintLayout>
-        </FrameLayout>
-    </ScrollView>
+        </ScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_mark_as_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_favorite"
+            app:fabSize="normal" />
+    </FrameLayout>
 </layout>

@@ -4,7 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+import com.popularmovies.data.RequestParams;
+import com.popularmovies.data.models.MovieReviewsResponse;
+import com.popularmovies.data.models.MoviesVideoResponse;
 
+
+import java.util.List;
 
 import static com.popularmovies.data.RequestParams.ADULT;
 import static com.popularmovies.data.RequestParams.BACKGROP_PATH;
@@ -69,6 +74,25 @@ public class MovieItem implements Parcelable {
     private float voteAverage;
 
 
+    @SerializedName(RequestParams.REVIEWS)
+    MovieReviewsResponse reviews;
+
+    @SerializedName(RequestParams.VIDEOS)
+    MoviesVideoResponse videos;
+
+    public MovieReviewsResponse getReviews() {
+        return reviews;
+    }
+
+    public MoviesVideoResponse getVideos() {
+        return videos;
+    }
+
+    private boolean isFavorite;
+
+    public MovieItem() {
+    }
+
     protected MovieItem(Parcel in) {
         id = in.readLong();
         posterPath = in.readString();
@@ -84,135 +108,8 @@ public class MovieItem implements Parcelable {
         voteCount = in.readLong();
         hasVideo = in.readByte() != 0;
         voteAverage = in.readFloat();
-    }
 
-    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
-        @Override
-        public MovieItem createFromParcel(Parcel in) {
-            return new MovieItem(in);
-        }
-
-        @Override
-        public MovieItem[] newArray(int size) {
-            return new MovieItem[size];
-        }
-    };
-
-    public String getPosterPath() {
-        return posterPath;
-    }
-
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
-
-    public long getId() {
-        return this.id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public boolean isAdult() {
-        return isAdult;
-    }
-
-    public void setAdult(boolean adult) {
-        isAdult = adult;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
-
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public String[] getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(String[] genreIds) {
-        this.genreIds = genreIds;
-    }
-
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
-
-    public String getOriginalLanguage() {
-        return originalLanguage;
-    }
-
-    public void setOriginalLanguage(String originalLanguage) {
-        this.originalLanguage = originalLanguage;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getBackdropPath() {
-        return backdropPath;
-    }
-
-    public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
-    }
-
-    public double getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(double popularity) {
-        this.popularity = popularity;
-    }
-
-    public long getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(long voteCount) {
-        this.voteCount = voteCount;
-    }
-
-    public boolean isHasVideo() {
-        return hasVideo;
-    }
-
-    public void setHasVideo(boolean hasVideo) {
-        this.hasVideo = hasVideo;
-    }
-
-    public float getVoteAverage() {
-        return voteAverage;
-    }
-
-    public void setVoteAverage(float voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        isFavorite = in.readByte() != 0;
     }
 
     @Override
@@ -231,5 +128,73 @@ public class MovieItem implements Parcelable {
         dest.writeLong(voteCount);
         dest.writeByte((byte) (hasVideo ? 1 : 0));
         dest.writeFloat(voteAverage);
+
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
+        @Override
+        public MovieItem createFromParcel(Parcel in) {
+            return new MovieItem(in);
+        }
+
+        @Override
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
+        }
+    };
+
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+
 }

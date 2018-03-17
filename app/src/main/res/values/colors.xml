@@ -13,7 +13,7 @@
     <color name="color_rating_high">#28b911</color>
     <color name="color_rating_border">#fff</color>
     <color name="color_font_rating">#fff</color>
-    <color name="transparent">#aa000000</color>
+    <color name="transparent">#000000</color>
     <color name="font_title_original">#cccccc</color>
     <color name="font_label_gray">#cecece</color>
 </resources>

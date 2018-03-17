@@ -1,5 +1,8 @@
 package com.popularmovies.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 import com.popularmovies.data.RequestParams;
 
@@ -7,7 +10,7 @@ import com.popularmovies.data.RequestParams;
  * Created by emil.ivanov on 3/6/18.
  */
 
-public class MovieVideo {
+public class MovieVideo implements Parcelable {
 
     public static final String TYPE_TRAILER = "";
     public static final String TYPE_TEASER ="";
@@ -32,6 +35,27 @@ public class MovieVideo {
     @SerializedName(RequestParams.VIDEO_NAME)
     String name;
 
+    protected MovieVideo(Parcel in) {
+        id = in.readString();
+        videoKey = in.readString();
+        videoSite = in.readString();
+        videoSize = in.readInt();
+        videoType = in.readString();
+        name = in.readString();
+    }
+
+    public static final Creator<MovieVideo> CREATOR = new Creator<MovieVideo>() {
+        @Override
+        public MovieVideo createFromParcel(Parcel in) {
+            return new MovieVideo(in);
+        }
+
+        @Override
+        public MovieVideo[] newArray(int size) {
+            return new MovieVideo[size];
+        }
+    };
+
     public String getId() {
         return id;
     }
@@ -44,33 +68,6 @@ public class MovieVideo {
         return videoKey;
     }
 
-    public void setVideoKey(String videoKey) {
-        this.videoKey = videoKey;
-    }
-
-    public String getVideoSite() {
-        return videoSite;
-    }
-
-    public void setVideoSite(String videoSite) {
-        this.videoSite = videoSite;
-    }
-
-    public int getVideoSize() {
-        return videoSize;
-    }
-
-    public void setVideoSize(int videoSize) {
-        this.videoSize = videoSize;
-    }
-
-    public String getVideoType() {
-        return videoType;
-    }
-
-    public void setVideoType(String videoType) {
-        this.videoType = videoType;
-    }
 
     public String getName() {
         return name;
@@ -78,5 +75,20 @@ public class MovieVideo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(videoKey);
+        parcel.writeString(videoSite);
+        parcel.writeInt(videoSize);
+        parcel.writeString(videoType);
+        parcel.writeString(name);
     }
 }

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -21,6 +22,9 @@ import android.view.View;
 
 import com.facebook.stetho.Stetho;
 import com.popularmovies.R;
+import com.popularmovies.data.database.DatabaseHelper;
+import com.popularmovies.data.database.MovieDaoImpl;
+import com.popularmovies.data.database.TestUtil;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
 import com.popularmovies.presentation.details.MovieDetailActivity;
@@ -48,6 +52,7 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
     private UtilsConfiguration mUtilsConfig;
     private static final String DEFAULT_MOVIE_CATEGORY = "top_rated";
     private static final String MOVIE_CATEGORY_POPULAR = "popular";
+    private static final String MOVIE_CATEGORY_FAVORITES = "favorites";
     private static final long DEFAULT_COLLECTION_PAGE = 1;
 
     private PresenterMovieCollection mPresenter;
@@ -103,6 +108,17 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
+        Stetho.initialize(Stetho.newInitializerBuilder(this)
+                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                .build());
+
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+
+//        TestUtil.insertFakeData(db);
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_list);
 
 
@@ -110,7 +126,7 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
         if (category != null) {
             setActionBarTitle(category);
         }
-        mPresenter = new PresenterMovieCollection(this);
+        mPresenter = new PresenterMovieCollection(this, new MovieDaoImpl(this));
 
         if (UtilsNetworkConnection.checkInternetConnection(this)) {
             Stetho.initializeWithDefaults(this);
@@ -169,6 +185,14 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
                 mPresenter.requestMoviesByCategory(MOVIE_CATEGORY_POPULAR, DEFAULT_COLLECTION_PAGE);
                 mUtilsConfig.storeCurrentUserSelection(MOVIE_CATEGORY_POPULAR, DEFAULT_COLLECTION_PAGE);
                 setActionBarTitle(MOVIE_CATEGORY_POPULAR);
+                return true;
+
+
+            case R.id.filter_favorites:
+
+                mPresenter.requestFavorites();
+                mUtilsConfig.storeCurrentUserSelection(MOVIE_CATEGORY_FAVORITES, DEFAULT_COLLECTION_PAGE);
+                setActionBarTitle(MOVIE_CATEGORY_FAVORITES);
                 return true;
 
             default:

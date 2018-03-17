@@ -14,8 +14,7 @@
         android:theme="@style/AppThemeColdStart">
         <activity
 
-            android:name=".presentation.movies.MovieCollectionActivity"
-            >
+            android:name=".presentation.movies.MovieCollectionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,13 +22,18 @@
             </intent-filter>
         </activity>
         <activity
-
             android:name=".presentation.details.MovieDetailActivity"
             android:parentActivityName=".presentation.movies.MovieCollectionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.popularmovies.presentation.movies.MovieCollectionActivity" />
         </activity>
+
+
+        <provider
+            android:name=".data.database.ContentProviderMovieData"
+            android:authorities="com.popularmovies"
+            android:exported="false"/>
     </application>
 
 </manifest>

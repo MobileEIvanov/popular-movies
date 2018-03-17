@@ -15,6 +15,8 @@ interface ContractMoviesScreen {
 
         void requestMoviesByCategory(String category, long page);
 
+        void requestFavorites();
+
         void onResume();
 
         void onStop();

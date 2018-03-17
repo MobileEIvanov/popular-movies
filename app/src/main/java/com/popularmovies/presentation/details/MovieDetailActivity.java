@@ -2,9 +2,12 @@ package com.popularmovies.presentation.details;
 
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -12,7 +15,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -20,26 +22,19 @@ import android.widget.Toast;
 
 
 import com.popularmovies.R;
-import com.popularmovies.data.RestClient;
-import com.popularmovies.data.RestDataSource;
-import com.popularmovies.data.models.MovieReviewsResponse;
-import com.popularmovies.data.models.MoviesResponse;
-import com.popularmovies.data.models.MoviesVideoResponse;
+import com.popularmovies.data.database.ContractMoviesData;
+import com.popularmovies.data.database.MovieDaoImpl;
 import com.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.popularmovies.entities.MovieItem;
 import com.popularmovies.entities.MovieReview;
 import com.popularmovies.entities.MovieVideo;
 import com.popularmovies.utils.EqualSpacingItemDecoration;
-import com.popularmovies.utils.GridSpacingItemDecoration;
+import com.popularmovies.utils.UtilsAnimations;
 import com.popularmovies.utils.UtilsConfiguration;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * An activity representing a single {@link MovieItem} detail screen.
@@ -62,6 +57,25 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
 
     private final IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     private PresenterMovieDetails mPresenter;
+
+
+    private final View.OnClickListener mListenerChangeIsFavorite = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+
+            if (mMovieItem.isFavorite()) {
+                mMovieItem.setFavorite(false);
+                mBinding.fabMarkAsFavorite.setSelected(false);
+            } else {
+                mMovieItem.setFavorite(true);
+                mBinding.fabMarkAsFavorite.setSelected(true);
+            }
+
+            mPresenter.requestChangeFavoriteStatus(mMovieItem);
+        }
+    };
+
 
     private final BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
         @Override
@@ -122,11 +136,8 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
         }
 
 
-        mPresenter = new PresenterMovieDetails(this);
-        mPresenter.requestMovieVideos(mMovieItem.getId());
-        mPresenter.requestMovieReviews(mMovieItem.getId());
-
-
+        mPresenter = new PresenterMovieDetails(this, new MovieDaoImpl(this));
+        mBinding.fabMarkAsFavorite.setOnClickListener(mListenerChangeIsFavorite);
     }
 
 
@@ -146,6 +157,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     public void onEnterAnimationComplete() {
         super.onEnterAnimationComplete();
         populateMovieData();
+        mPresenter.requestMovieDetails(mMovieItem);
     }
 
     @Override
@@ -195,6 +207,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
         }
 
         displayMovieRating(mMovieItem.getVoteAverage());
+
     }
 
     /**
@@ -253,6 +266,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
                     supportStartPostponedEnterTransition();
                 } else {
                     populateMovieData();
+                    mPresenter.requestMovieDetails(mMovieItem);
                 }
             }
 
@@ -262,6 +276,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
                     supportStartPostponedEnterTransition();
                 } else {
                     populateMovieData();
+                    mPresenter.requestMovieDetails(mMovieItem);
                 }
             }
         });
@@ -288,12 +303,30 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     }
 
     @Override
+    public void displayMovieDetails(MovieItem movieItem) {
+        mMovieItem = movieItem;
+        if (mMovieItem.getReviews() != null && mMovieItem.getReviews().getMovieReviewsItems().size() > 0) {
+            displayReviews(mMovieItem.getReviews().getMovieReviewsItems());
+        } else {
+            displayEmptyReviews();
+        }
+
+        if (mMovieItem.getVideos() != null && mMovieItem.getVideos().getMovieVideos().size() > 0) {
+            displayVideos(mMovieItem.getVideos().getMovieVideos());
+        } else {
+            displayEmptyVideos();
+        }
+    }
+
+
+    @Override
     public void displayVideos(List<MovieVideo> movieVideos) {
         AdapterMovieVideos adapterMovieVideos = new AdapterMovieVideos(this, movieVideos, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mBinding.rvMovieVideos.setLayoutManager(layoutManager);
         mBinding.rvMovieVideos.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
         mBinding.rvMovieVideos.setAdapter(adapterMovieVideos);
+        UtilsAnimations.createCircularReveal(mBinding.rvMovieVideos);
     }
 
     @Override

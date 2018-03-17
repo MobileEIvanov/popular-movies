@@ -1,10 +1,11 @@
 package com.popularmovies.data;
 
 public interface RequestParams {
-
+    //       &append_to_response=videos,reviews
     String API_KEY = "api_key";
     String MOVIE_CATEGORY = "category";
     String MOVIE_ID = "movie_id";
+    String APPEND_TO_RESPONSE = "append_to_response";
 
     //        Configurations
     String IMAGES = "images";
@@ -42,8 +43,6 @@ public interface RequestParams {
     String TOTAL_PAGES = "total_pages";
 
 
-
-
     // Movie Videos
     String VIDEO_ID = "id";
     String VIDEO_ISO_639_1 = "iso_639_1";
@@ -61,4 +60,6 @@ public interface RequestParams {
 
 
     String VIDEO_NAME = "name";
+    String REVIEWS = "reviews";
+    String VIDEOS = "videos";
 }

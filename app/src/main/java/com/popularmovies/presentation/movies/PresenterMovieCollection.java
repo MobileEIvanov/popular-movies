@@ -1,19 +1,25 @@
 package com.popularmovies.presentation.movies;
 
+import android.database.Cursor;
 import android.util.Log;
 
 import com.popularmovies.data.RestClient;
 import com.popularmovies.data.RestDataSource;
+import com.popularmovies.data.database.ContractMoviesData;
+import com.popularmovies.data.database.MovieDaoImpl;
 import com.popularmovies.data.models.ConfigurationResponse;
 import com.popularmovies.data.models.MoviesResponse;
+import com.popularmovies.entities.MovieItem;
 import com.popularmovies.presentation.movies.ContractMoviesScreen.Presenter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -23,16 +29,18 @@ import io.reactivex.schedulers.Schedulers;
 public class PresenterMovieCollection implements Presenter {
 
     private final ContractMoviesScreen.View mView;
+    private MovieDaoImpl mMovieDao;
 
     private final CompositeDisposable mCompositeDisposable;
     private Disposable mDisplosableMovies;
     private Disposable mDisplosableConfig;
 
-     PresenterMovieCollection(ContractMoviesScreen.View view) {
-        mView = view;
+
+    public PresenterMovieCollection(ContractMoviesScreen.View mView, MovieDaoImpl mMovieDao) {
+        this.mView = mView;
+        this.mMovieDao = mMovieDao;
         mCompositeDisposable = new CompositeDisposable();
     }
-
 
     @Override
     public void requestConfigurations() {
@@ -51,11 +59,46 @@ public class PresenterMovieCollection implements Presenter {
         mView.showProgressLoader();
         RestDataSource restDataSource = new RestDataSource();
         mDisplosableMovies = restDataSource.requestMoviesByCategory(category, page, RestClient.API_KEY)
+
+                // TODO: 3/15/18 Make a request for all the movies in the database? and map if there are favorite?
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onSuccessMoviesResponse, onFailureMoviesResponse);
 
         mCompositeDisposable.add(mDisplosableMovies);
+    }
+
+    @Override
+    public void requestFavorites() {
+        String whereClause = ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE + "=?";
+        String[] selectionArgs = {"1"};
+        mMovieDao.queryAll(whereClause, selectionArgs).map(new Function<Cursor, List<MovieItem>>() {
+            @Override
+            public List<MovieItem> apply(Cursor cursor) throws Exception {
+                int indexId = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_ID);
+                int indexTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE);
+                int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
+
+                List<MovieItem> movieItems = new ArrayList<>();
+
+                while (cursor.moveToNext()) {
+                    MovieItem movieItem = new MovieItem();
+
+                    movieItem.setTitle(cursor.getString(indexTitle));
+                    movieItem.setFavorite(cursor.getInt(indexFavorite) == 1);
+                    movieItem.setId(cursor.getLong(indexId));
+                    movieItems.add(movieItem);
+                }
+
+                return movieItems;
+            }
+        }).subscribe(new Consumer<List<MovieItem>>() {
+            @Override
+            public void accept(List<MovieItem> movieItems) throws Exception {
+                mView.displayMovies(movieItems);
+            }
+        });
+
     }
 
     @Override
