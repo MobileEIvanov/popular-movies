@@ -11,6 +11,8 @@ import com.popularmovies.data.models.MovieReviewsResponse;
 import com.popularmovies.data.models.MoviesVideoResponse;
 import com.popularmovies.entities.MovieItem;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -97,6 +99,14 @@ public class PresenterMovieDetails implements ContractMovieDetails.Presenter {
 
         RestDataSource restDataSource = new RestDataSource();
         mNetworkOperationReview = restDataSource.requestMovieDetails(movieItem.getId(), RestClient.API_KEY, appendToRequest)
+                .map(new Function<MovieItem, MovieItem>() {
+                    @Override
+                    public MovieItem apply(MovieItem movieItem) throws Exception {
+                        boolean isFavorite = mMovieDao.isFavorite(movieItem);
+                        movieItem.setFavorite(isFavorite);
+                        return movieItem;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onSuccessDetailsResponse, onFailureDetailsResponse);
@@ -120,6 +130,7 @@ public class PresenterMovieDetails implements ContractMovieDetails.Presenter {
                 .subscribe(onSuccessRecordUpdate, onFailureRecordUpdate);
         Log.d("Presenter", "requestChangeFavoriteStatus: MAIN THREAD ");
     }
+
 
 
     private final Consumer<MovieItem> onSuccessDetailsResponse = new Consumer<MovieItem>() {

@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Created by emil.ivanov on 2/18/18.
- *
+ * <p>
  * Infinite scroll solution is based on this stack post
  * https://stackoverflow.com/questions/35673854/how-to-implement-infinite-scroll-in-gridlayout-recylcerview
  */
@@ -51,9 +51,7 @@ public class AdapterMovieVideos extends RecyclerView.Adapter<AdapterMovieVideos.
         holder.itemView.setTag(position);
         holder.bindData(mData.get(position));
 
-        if ((position >= getItemCount() - 1)) {
-            mListenerMovieInteraction.onLoadMore();
-        }
+
     }
 
     @Override
@@ -63,12 +61,20 @@ public class AdapterMovieVideos extends RecyclerView.Adapter<AdapterMovieVideos.
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final View.OnClickListener mClickListener = new View.OnClickListener() {
+        private final View.OnClickListener mClickListenerPlay = new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                int position = (Integer) v.getTag();
+                int position = (Integer) itemView.getTag();
                 mListenerMovieInteraction.onVideoSelected(mData.get(position));
+            }
+        };
+        private final View.OnClickListener mClickListenerShare = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int position = (Integer) itemView.getTag();
+                mListenerMovieInteraction.onShareVideo(mData.get(position));
             }
         };
 
@@ -77,7 +83,8 @@ public class AdapterMovieVideos extends RecyclerView.Adapter<AdapterMovieVideos.
         ViewHolder(View view) {
             super(view);
             mBinding = DataBindingUtil.bind(view);
-            itemView.setOnClickListener(mClickListener);
+            mBinding.flPlayIcon.setOnClickListener(mClickListenerPlay);
+            mBinding.icShareVideo.setOnClickListener(mClickListenerShare);
         }
 
         private void bindData(MovieVideo movieVideo) {
@@ -101,6 +108,6 @@ public class AdapterMovieVideos extends RecyclerView.Adapter<AdapterMovieVideos.
     public interface ICollectionVideosInteraction {
         void onVideoSelected(MovieVideo videoItem);
 
-        void onLoadMore();
+        void onShareVideo(MovieVideo videoItem);
     }
 }

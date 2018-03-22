@@ -25,10 +25,14 @@ public class ContractMoviesData {
                         .appendPath(PATH_MOVIES).build();
 
 
-
         public static final String COLUMN_MOVIE_ID = "id";
         public static final String COLUMN_MOVIE_TITLE = "title";
         public static final String COLUMN_IS_FAVORITE = "isFavorite";
+        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_MOVIE_TITLE_ORIGINAL = "title_original";
+        public static final String COLUMN_MOVIE_PLOT_OVERVIEW = "plot_overview";
+        public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
+        public static final String COLUMN_MOVIE_RATING = "rating";
         public static final String COLUMN_TIMESTAMP = "timestamp";
 
 
@@ -36,9 +40,15 @@ public class ContractMoviesData {
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 MovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_TITLE_ORIGINAL + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_PLOT_OVERVIEW + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_RATING + " FLOAT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_IS_FAVORITE + " BOOLEAN NOT NULL, " +
                 MovieEntry.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                 "); ";
+
     }
 
 }

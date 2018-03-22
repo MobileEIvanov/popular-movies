@@ -10,4 +10,5 @@
     <dimen name="dimen_label">16sp</dimen>
     <dimen name="dimen_poster_thumb_height">200dp</dimen>
     <dimen name="dimen_movie_overview">16sp</dimen>
+    <dimen name="dimen_review_card_size">180dp</dimen>
 </resources>

@@ -21,6 +21,8 @@ public interface IMovieDAO {
 
     int updateRecord(MovieItem movieItem);
 
+    boolean isFavorite(MovieItem movieItem);
+
     int bulkInsertItems(MovieItem movieItem);
 
     Observable<Cursor> query(MovieItem movieItem);

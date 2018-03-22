@@ -50,6 +50,11 @@ public class MovieDaoImpl implements IMovieDAO {
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_ID, movieItem.getId());
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE, movieItem.getTitle());
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE, movieItem.isFavorite());
+        contentValues.put(ContractMoviesData.MovieEntry.COLUMN_POSTER_PATH, movieItem.getPosterPath());
+        contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE_ORIGINAL, movieItem.getOriginalTitle());
+        contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movieItem.getReleaseDate());
+        contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_PLOT_OVERVIEW, movieItem.getOverview());
+        contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RATING, movieItem.getVoteAverage());
 
         Uri uri = contentResolver.insert(ContractMoviesData.MovieEntry.CONTENT_URI, contentValues);
 
@@ -71,6 +76,25 @@ public class MovieDaoImpl implements IMovieDAO {
 
         int rowsUpdate = contentResolver.update(uri, contentValues, null, null);
         return rowsUpdate;
+    }
+
+    @Override
+    public boolean isFavorite(MovieItem movieItem) {
+
+        String stringId = String.valueOf(movieItem.getId());
+        Uri uri = ContractMoviesData.MovieEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(stringId).build();
+        Cursor cursor = mContext.getContentResolver().query(uri, new String[]{ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE}, null, null, null);
+
+        int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
+        boolean isFavorite = false;
+
+        if (cursor != null && cursor.moveToNext()) {
+            isFavorite = cursor.getInt(indexFavorite) == 1 ? true : false;
+        }
+        cursor.close();
+
+        return isFavorite;
     }
 
     @Override

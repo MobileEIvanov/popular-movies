@@ -78,7 +78,11 @@ public class PresenterMovieCollection implements Presenter {
                 int indexId = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_ID);
                 int indexTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE);
                 int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
-
+                int indexRating = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RATING);
+                int indexReleaseDate = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
+                int indexPlotOverview = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_PLOT_OVERVIEW);
+                int indexOriginalTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE_ORIGINAL);
+                int indexPosterImage = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_POSTER_PATH);
                 List<MovieItem> movieItems = new ArrayList<>();
 
                 while (cursor.moveToNext()) {
@@ -87,6 +91,11 @@ public class PresenterMovieCollection implements Presenter {
                     movieItem.setTitle(cursor.getString(indexTitle));
                     movieItem.setFavorite(cursor.getInt(indexFavorite) == 1);
                     movieItem.setId(cursor.getLong(indexId));
+                    movieItem.setOriginalTitle(cursor.getString(indexOriginalTitle));
+                    movieItem.setOverview(cursor.getString(indexPlotOverview));
+                    movieItem.setVoteAverage(cursor.getFloat(indexRating));
+                    movieItem.setReleaseDate(cursor.getString(indexReleaseDate));
+                    movieItem.setPosterPath(cursor.getString(indexPosterImage));
                     movieItems.add(movieItem);
                 }
 
@@ -95,7 +104,11 @@ public class PresenterMovieCollection implements Presenter {
         }).subscribe(new Consumer<List<MovieItem>>() {
             @Override
             public void accept(List<MovieItem> movieItems) throws Exception {
-                mView.displayMovies(movieItems);
+                if (movieItems.size() > 0) {
+                    mView.displayMovies(movieItems);
+                } else {
+                    mView.showEmptyView();
+                }
             }
         });
 

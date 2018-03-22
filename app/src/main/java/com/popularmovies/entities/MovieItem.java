@@ -93,6 +93,25 @@ public class MovieItem implements Parcelable {
     public MovieItem() {
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MovieItem movieItem = (MovieItem) o;
+
+        if (id != movieItem.id) return false;
+        return title.equals(movieItem.title);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + title.hashCode();
+        return result;
+    }
+
     protected MovieItem(Parcel in) {
         id = in.readLong();
         posterPath = in.readString();
@@ -196,5 +215,24 @@ public class MovieItem implements Parcelable {
         isFavorite = favorite;
     }
 
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
 
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public void setVoteAverage(float voteAverage) {
+        this.voteAverage = voteAverage;
+    }
 }

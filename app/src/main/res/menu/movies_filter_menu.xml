@@ -4,15 +4,19 @@
     <item
         android:id="@+id/filter_top_rated"
         android:title="@string/label_top_rated"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="collapseActionView"
+        android:icon="@drawable/ic_grade_black_18dp"
+       />
 
     <item
         android:id="@+id/filter_most_popular"
         android:title="@string/label_popular"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="collapseActionView"
+        android:icon="@drawable/ic_trending_up_black_18dp"/>
 
     <item
         android:id="@+id/filter_favorites"
         android:title="@string/label_favorites"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="collapseActionView"
+        android:icon="@drawable/ic_favorite_black_18dp"/>
 </menu>

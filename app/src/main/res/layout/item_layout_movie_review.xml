@@ -4,50 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_width="@dimen/dimen_review_card_size"
+        android:layout_height="@dimen/dimen_review_card_size"
         app:cardBackgroundColor="@color/font_white"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/font_white"
             android:padding="16dp">
 
 
-            <TextView
-                android:id="@+id/tv_label_reviewed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Reviewed"
-                android:textColor="#000"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!--<TextView-->
+            <!--android:id="@+id/tv_label_reviewed"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="16dp"-->
+            <!--android:layout_marginStart="16dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:gravity="center"-->
+            <!--android:text="Reviewed"-->
+            <!--android:textColor="#000"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textStyle="bold"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent" />-->
 
-            <TextView
-                android:id="@+id/tv_label_by"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="by"
-                android:textColor="@color/font_label_gray"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_label_reviewed" />
+            <!--<TextView-->
+                <!--android:id="@+id/tv_label_by"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginEnd="16dp"-->
+                <!--android:layout_marginStart="16dp"-->
+                <!--android:gravity="center"-->
+                <!--android:text="by"-->
+                <!--android:textColor="@color/font_label_gray"-->
+                <!--android:textSize="12sp"-->
+                <!--android:textStyle="bold"-->
+                <!--app:layout_constraintEnd_toEndOf="parent"-->
+                <!--app:layout_constraintStart_toStartOf="parent"-->
+                <!--app:layout_constraintTop_toTopOf="parent" />-->
 
             <TextView
                 android:id="@+id/tv_author_name"
@@ -55,11 +54,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="#000"
-                android:textSize="18sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_label_by"
+
                 tools:text="John Doe" />
 
 
@@ -67,19 +66,17 @@
                 android:id="@+id/tv_review_summary"
                 style="@style/MovieDetailInfo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_height="0dp"
                 android:ellipsize="marquee"
                 android:gravity="center"
-                android:maxLength="180"
+                android:maxLength="120"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:textColor="#111111"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_label_read_more"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/tv_label_read_more"
                 app:layout_constraintTop_toBottomOf="@+id/tv_author_name"
                 tools:text="This movie represents a genre that has inspired a generation" />
 
@@ -87,11 +84,11 @@
                 android:id="@+id/tv_label_read_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="@string/label_read_more"
                 android:textColor="#000"
                 android:textSize="14sp"
                 android:textStyle="bold"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

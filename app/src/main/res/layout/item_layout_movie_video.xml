@@ -12,8 +12,20 @@
             android:layout_width="150dp"
             android:layout_height="100dp"
             android:background="@color/transparent"
-            android:padding="16dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
 
+            <ImageView
+                android:id="@+id/ic_share_video"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:src="@android:drawable/ic_menu_share"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
             <FrameLayout
                 android:id="@+id/fl_play_icon"
                 android:layout_width="36dp"

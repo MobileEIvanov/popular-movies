@@ -28,10 +28,13 @@ import com.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.popularmovies.entities.MovieItem;
 import com.popularmovies.entities.MovieReview;
 import com.popularmovies.entities.MovieVideo;
+import com.popularmovies.presentation.movies.MovieCollectionActivity;
 import com.popularmovies.utils.EqualSpacingItemDecoration;
 import com.popularmovies.utils.UtilsAnimations;
 import com.popularmovies.utils.UtilsConfiguration;
+import com.popularmovies.utils.UtilsNetworkConnection;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -39,7 +42,9 @@ import java.util.List;
 /**
  * An activity representing a single {@link MovieItem} detail screen.
  */
-public class MovieDetailActivity extends AppCompatActivity implements ContractMovieDetails.View, AdapterMovieVideos.ICollectionVideosInteraction, AdapterMovieReviews.ICollectionReviewInteraction {
+public class MovieDetailActivity extends AppCompatActivity implements ContractMovieDetails.View,
+        AdapterMovieVideos.ICollectionVideosInteraction,
+        AdapterMovieReviews.ICollectionReviewInteraction {
 
     private static final float RATING_BAR_LOW = 5.0f;
     private static final float RATING_BAR_HIGH = 7.0f;
@@ -58,6 +63,8 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     private final IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     private PresenterMovieDetails mPresenter;
 
+    private AdapterMovieVideos mAdapterVideos;
+    private AdapterMovieReviews mAdapterReviews;
 
     private final View.OnClickListener mListenerChangeIsFavorite = new View.OnClickListener() {
         @Override
@@ -92,21 +99,21 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
                         .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
 
+                mBinding.layoutNoConnection.getRoot().setVisibility(View.INVISIBLE);
+                if (mBinding.contentDetails.getVisibility() == View.INVISIBLE) {
+                    mBinding.contentDetails.setVisibility(View.VISIBLE);
+                }
+
                 if (wifi.isAvailable() || mobile.isAvailable()) {
 
                     if (wifi.isConnected() || mobile.isConnected()) {
 
 
-                        mBinding.layoutNoConnection.getRoot().setVisibility(View.INVISIBLE);
-                        if (mBinding.contentDetails.getVisibility() == View.INVISIBLE) {
-                            mBinding.contentDetails.setVisibility(View.VISIBLE);
-                        }
-
                     } else {
-                        if (mBinding.layoutNoConnection.getRoot().getVisibility() == View.INVISIBLE) {
-                            mBinding.layoutNoConnection.getRoot().setVisibility(View.VISIBLE);
-                            mBinding.contentDetails.setVisibility(View.INVISIBLE);
-                        }
+//                        if (mBinding.layoutNoConnection.getRoot().getVisibility() == View.INVISIBLE) {
+//                            mBinding.layoutNoConnection.getRoot().setVisibility(View.VISIBLE);
+//                            mBinding.contentDetails.setVisibility(View.INVISIBLE);
+//                        }
                     }
                 }
             }
@@ -137,6 +144,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
 
 
         mPresenter = new PresenterMovieDetails(this, new MovieDaoImpl(this));
+
         mBinding.fabMarkAsFavorite.setOnClickListener(mListenerChangeIsFavorite);
     }
 
@@ -144,6 +152,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     @Override
     protected void onResume() {
         super.onResume();
+
         this.registerReceiver(mConnectionReceiver, filter);
     }
 
@@ -156,8 +165,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     @Override
     public void onEnterAnimationComplete() {
         super.onEnterAnimationComplete();
-        populateMovieData();
-        mPresenter.requestMovieDetails(mMovieItem);
+        loadMovieData();
     }
 
     @Override
@@ -206,15 +214,18 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
             mBinding.tvPlotSynopsis.setText(R.string.text_empty_data_item);
         }
 
+        mBinding.fabMarkAsFavorite.setSelected(mMovieItem.isFavorite());
+
+
         displayMovieRating(mMovieItem.getVoteAverage());
 
     }
 
     /**
      * Shows the movie rating value and background color based on intervals
-     * Below RATING_BAR_LOW - red background
-     * From RATING_BAR_LOW to RATING_BAR_HIGH - blue background
-     * From RATING_BAR_HIGH - green background
+     * Below {@link MovieDetailActivity#RATING_BAR_LOW} - red background
+     * From {@link MovieDetailActivity#RATING_BAR_LOW} to {@link MovieDetailActivity#RATING_BAR_HIGH} - blue background
+     * From {@link MovieDetailActivity#RATING_BAR_HIGH} - green background
      *
      * @param movieRating - {@link MovieItem} rating
      */
@@ -253,37 +264,48 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
             return;
         }
 
-        String imagePosterUrl = mImageConfig.getImageBaseURL() + mImageConfig.getImageMaxSize() + mMovieItem.getPosterPath();
+        String imagePosterUrl = mImageConfig.getImageBaseURL() + "/" + mImageConfig.getImageMediumSize() + mMovieItem.getPosterPath();
+
 
         Picasso.with(this).load(imagePosterUrl)
                 // TODO: 3/5/18  Add placeholder image and on Error
-//                .placeholder(R.drawable.user_placeholder)
-//                .error(R.drawable.user_placeholder_error)
-                .fit().noFade().into(mBinding.ivThumbMovie, new Callback() {
-            @Override
-            public void onSuccess() {
-                if (isInitialLoad) {
-                    supportStartPostponedEnterTransition();
-                } else {
-                    populateMovieData();
-                    mPresenter.requestMovieDetails(mMovieItem);
-                }
-            }
+                .placeholder(R.color.colorPrimary)
+                .error(R.drawable.empty_image)
+                .fit()
+                .noFade()
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(mBinding.ivThumbMovie, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (isInitialLoad) {
+                            supportStartPostponedEnterTransition();
+                        } else {
+                            loadMovieData();
+                        }
+                    }
 
-            @Override
-            public void onError() {
-                if (isInitialLoad) {
-                    supportStartPostponedEnterTransition();
-                } else {
-                    populateMovieData();
-                    mPresenter.requestMovieDetails(mMovieItem);
-                }
-            }
-        });
+                    @Override
+                    public void onError() {
+                        if (isInitialLoad) {
+                            supportStartPostponedEnterTransition();
+                        } else {
+                            loadMovieData();
+                        }
+                    }
+                });
 
 
     }
 
+    private void loadMovieData() {
+        populateMovieData();
+        if (UtilsNetworkConnection.checkInternetConnection(MovieDetailActivity.this)) {
+            mPresenter.requestMovieDetails(mMovieItem);
+        } else {
+            displayEmptyVideos();
+        }
+
+    }
 
     private void setActionBarTitle(String actionBarTitle) {
         if (actionBarTitle == null) {
@@ -298,13 +320,19 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     @Override
     public void onBackPressed() {
         mBinding.layoutRatingView.flRatingContainer.setVisibility(View.INVISIBLE);
+
+        setResult(MovieCollectionActivity.REQUEST_MOVIE_DETAILS,
+                getIntent().putExtra(MovieItem.MOVIE_DATA, mMovieItem));
+
         supportFinishAfterTransition();
-        super.onBackPressed();
     }
 
     @Override
     public void displayMovieDetails(MovieItem movieItem) {
         mMovieItem = movieItem;
+
+        mBinding.fabMarkAsFavorite.setSelected(mMovieItem.isFavorite());
+
         if (mMovieItem.getReviews() != null && mMovieItem.getReviews().getMovieReviewsItems().size() > 0) {
             displayReviews(mMovieItem.getReviews().getMovieReviewsItems());
         } else {
@@ -321,35 +349,39 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
 
     @Override
     public void displayVideos(List<MovieVideo> movieVideos) {
-        AdapterMovieVideos adapterMovieVideos = new AdapterMovieVideos(this, movieVideos, this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mBinding.rvMovieVideos.setLayoutManager(layoutManager);
-        mBinding.rvMovieVideos.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
-        mBinding.rvMovieVideos.setAdapter(adapterMovieVideos);
-        UtilsAnimations.createCircularReveal(mBinding.rvMovieVideos);
+
+        if (mAdapterVideos == null) {
+            mAdapterVideos = new AdapterMovieVideos(this, movieVideos, this);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            mBinding.rvMovieVideos.setLayoutManager(layoutManager);
+            mBinding.rvMovieVideos.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
+            mBinding.rvMovieVideos.setAdapter(mAdapterVideos);
+            UtilsAnimations.createCircularReveal(mBinding.rvMovieVideos);
+        }
     }
 
     @Override
     public void displayReviews(List<MovieReview> movieReviews) {
-        AdapterMovieReviews adapterMovieReviews = new AdapterMovieReviews(this, movieReviews, this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mBinding.rvMovieReviews.setLayoutManager(layoutManager);
-        mBinding.rvMovieReviews.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
 
-        mBinding.rvMovieReviews.setAdapter(adapterMovieReviews);
-
-
+        if (mAdapterReviews == null) {
+            mAdapterReviews = new AdapterMovieReviews(this, movieReviews, this);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            mBinding.rvMovieReviews.setLayoutManager(layoutManager);
+            mBinding.rvMovieReviews.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
+            mBinding.rvMovieReviews.setAdapter(mAdapterReviews);
+        }
     }
 
     @Override
     public void displayEmptyVideos() {
-
+        mBinding.flMovieVideos.setVisibility(View.GONE);
     }
 
     @Override
     public void displayEmptyReviews() {
-
+        mBinding.flMovieReview.setVisibility(View.GONE);
     }
+
 
     @Override
     public void onVideoSelected(MovieVideo videoItem) {
@@ -368,6 +400,31 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     }
 
     @Override
+    public void onShareVideo(MovieVideo videoItem) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        String uriYoutube = String.valueOf(Uri.parse("vnd.youtube:" + videoItem.getVideoKey()));
+        String webYoutube = "http://www.youtube.com/watch?v=" + videoItem.getVideoKey();
+
+        StringBuilder shareMessage = new StringBuilder();
+        shareMessage.append(getString(R.string.share_message_watch_youtube_app))
+                .append("\n\n")
+                .append(uriYoutube)
+                .append("\n\n")
+                .append(getString(R.string.share_message_watch_on_web))
+                .append("\n\n")
+                .append(webYoutube)
+                .append("\n\n")
+                .append(getString(R.string.share_message_enjoy));
+
+
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, mMovieItem.getTitle() + "\n" + getString(R.string.share_message_subject));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage.toString());
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_message_dialog_title)));
+    }
+
+    @Override
     public void onReviewSelected(MovieReview movieReviewItem) {
         Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewItem.getUrl()));
         startActivity(webIntent);
@@ -375,6 +432,6 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
 
     @Override
     public void onLoadMore() {
-
+        // Future support for loading more reviews
     }
 }

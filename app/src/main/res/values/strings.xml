@@ -20,4 +20,12 @@
     <string name="label_videos">Videos</string>
     <string name="label_read_more">Read more...</string>
     <string name="label_favorites">Favorites</string>
+    <string name="share_component_list_item_title">shared_title</string>
+    <string name="label_reviews">Reviewed by:</string>
+    <string name="error_api_issue">Currently we are unable to access any data. Please try again later :)</string>
+    <string name="share_message_watch_youtube_app">To watch with Youtube app use this:</string>
+    <string name="share_message_watch_on_web">Watch on web here:</string>
+    <string name="share_message_enjoy">Enjoy the awesomeness !!!</string>
+    <string name="share_message_subject">Awesome Video Just Watch!</string>
+    <string name="share_message_dialog_title">Share Trailer</string>
 </resources>

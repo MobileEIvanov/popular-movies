@@ -14,6 +14,8 @@
             android:transitionName="@string/share_component_list_details"
             android:contentDescription="@string/content_description_movie_poster"
             app:layout_constraintDimensionRatio="h,4:3" />
+
+
     </android.support.constraint.ConstraintLayout>
 
 </layout>

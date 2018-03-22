@@ -38,5 +38,6 @@ public interface ContractMovieDetails {
         void displayEmptyVideos();
 
         void displayEmptyReviews();
+
     }
 }
