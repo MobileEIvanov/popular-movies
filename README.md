@@ -58,7 +58,7 @@ Please read [CONTRIBUTING.md] for details on our code of conduct, and the proces
 * [Network Connection status](https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android)
 * [Picasso Cashing](https://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso)
 * [JakeWharton - OkHttpDownloader](https://github.com/JakeWharton/picasso2-okhttp3-downloader)
-* [Grid Spacing class](Credits to https://gist.github.com/alexfu/f7b8278009f3119f523a)
+* [Grid Spacing class](https://gist.github.com/alexfu/f7b8278009f3119f523a)
 * [Grid Spacing Older version](https://gist.github.com/liangzhitao/e57df3c3232ee446d464)
 ## License
 
