@@ -16,6 +16,21 @@ The project information is loaded from the [link The Movie Database](https://www
 You will have to create your own account in order to request information from the API.
 The API Key should be placed in **RestClient.java** which is responsible for creating the requests.
 
+## Version Log
+NEW v.1.1
+- Added Offiline support for Favorite movies
+- Added request and listin for movie video - including trailers, teasers etc.
+- Added moview reviews section
+- Improved image loading and cashing
+- User is now able to mark movie as favorite
+
+v.1.0
+- Movies request from the movie database
+- Grid representation of movies
+- Movie details - rating, overview, poster, title
+- Animated transitions
+
+
 ### Coding style 
 The project follows the general coding style for Java and Android.
 
@@ -41,7 +56,10 @@ Please read [CONTRIBUTING.md] for details on our code of conduct, and the proces
 * [Endless scroll for Recycle view](https://stackoverflow.com/questions/35673854/how-to-implement-infinite-scroll-in-gridlayout-recylcerview)
 * [Grid Items size](https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns)
 * [Network Connection status](https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android)
-
+* [Picasso Cashing](https://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso)
+* [JakeWharton - OkHttpDownloader](https://github.com/JakeWharton/picasso2-okhttp3-downloader)
+* [Grid Spacing class](https://gist.github.com/alexfu/f7b8278009f3119f523a)
+* [Grid Spacing Older version](https://gist.github.com/liangzhitao/e57df3c3232ee446d464)
 ## License
 
     Licensed under the Apache License, Version 2.0 (the "License");
