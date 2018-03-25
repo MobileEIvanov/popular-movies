@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Created by emil.ivanov on 2/23/18.
+ * Contract representation of Presenter and View actions part of the MVP architecture.
  */
 
 interface ContractMoviesScreen {

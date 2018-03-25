@@ -1,7 +1,6 @@
 package com.popularmovies.data.database;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,20 +13,20 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import static com.popularmovies.data.database.ContractMoviesData.*;
-import static com.popularmovies.data.database.ContractMoviesData.MovieEntry.COLUMN_MOVIE_ID;
 import static com.popularmovies.data.database.ContractMoviesData.MovieEntry.TABLE_NAME;
 
 /**
  * Created by emil.ivanov on 3/17/18.
+ * Content provider class used for accessing and storing data for {@link com.popularmovies.entities.MovieItem}
+ * the solution is based on the example videos provided by Udacity.
  */
 
 public class ContentProviderMovieData extends ContentProvider {
 
-    DatabaseHelper mDatabaseHelper;
+    private DatabaseHelper mDatabaseHelper;
 
-    // TODO: 3/17/18 Define integer constants for Directory and Signle item
-    public static final int MOVIES = 100;
-    public static final int MOVIES_WITH_ID = 101;
+    private static final int MOVIES = 100;
+    private static final int MOVIES_WITH_ID = 101;
 
     @Override
     public boolean onCreate() {
@@ -62,8 +61,6 @@ public class ContentProviderMovieData extends ContentProvider {
         int match = sUriMatcher.match(uri);
 
         Cursor retCursor;
-
-
         switch (match) {
 
             case MOVIES:
@@ -78,18 +75,17 @@ public class ContentProviderMovieData extends ContentProvider {
                 String mSelection = "id=?";
                 String[] mSelectionArgs = new String[]{id};
                 retCursor = db.query(TABLE_NAME, null, mSelection, mSelectionArgs, null, null, null);
-
-
                 break;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
-
-
         }
 
         // Set a notification URI on the Cursor
-        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null) {
+            retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
+
         return retCursor;
     }
 
@@ -125,8 +121,9 @@ public class ContentProviderMovieData extends ContentProvider {
                 throw new UnsupportedOperationException("Uri: " + uri);
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
-
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return returnUri;
     }
 
@@ -152,7 +149,9 @@ public class ContentProviderMovieData extends ContentProvider {
         }
 
         if (deletedTasks != 0) {
-            getContext().getContentResolver().notifyChange(uri,null);
+            if (getContext() != null) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
         }
 
         return deletedTasks;
@@ -179,7 +178,9 @@ public class ContentProviderMovieData extends ContentProvider {
 
         if (tasksUpdated != 0) {
             //set notifications if a task was updated
-            getContext().getContentResolver().notifyChange(uri, null);
+            if (getContext() != null) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
         }
 
         // return number of tasks updated

@@ -5,19 +5,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-
 import com.popularmovies.entities.MovieItem;
-
-import io.reactivex.Observable;
 import io.reactivex.Single;
 
 /**
  * Created by emil.ivanov on 3/18/18.
+ * Data access operations implementation. Based on the rules set by {@link IMovieDAO}
  */
 
 public class MovieDaoImpl implements IMovieDAO {
 
-    Context mContext;
+    private final Context mContext;
 
     public MovieDaoImpl(Context context) {
         mContext = context;
@@ -34,10 +32,12 @@ public class MovieDaoImpl implements IMovieDAO {
 
         boolean hasRecord = false;
 
-        if (cursor != null && cursor.moveToNext()) {
-            hasRecord = true;
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                hasRecord = true;
+            }
+            cursor.close();
         }
-        cursor.close();
 
         return Single.just(hasRecord);
     }
@@ -56,10 +56,7 @@ public class MovieDaoImpl implements IMovieDAO {
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_PLOT_OVERVIEW, movieItem.getOverview());
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RATING, movieItem.getVoteAverage());
 
-        Uri uri = contentResolver.insert(ContractMoviesData.MovieEntry.CONTENT_URI, contentValues);
-
-
-        return uri;
+        return contentResolver.insert(ContractMoviesData.MovieEntry.CONTENT_URI, contentValues);
     }
 
     @Override
@@ -74,8 +71,7 @@ public class MovieDaoImpl implements IMovieDAO {
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE, movieItem.getTitle());
         contentValues.put(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE, movieItem.isFavorite());
 
-        int rowsUpdate = contentResolver.update(uri, contentValues, null, null);
-        return rowsUpdate;
+        return contentResolver.update(uri, contentValues, null, null);
     }
 
     @Override
@@ -86,39 +82,20 @@ public class MovieDaoImpl implements IMovieDAO {
         uri = uri.buildUpon().appendPath(stringId).build();
         Cursor cursor = mContext.getContentResolver().query(uri, new String[]{ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE}, null, null, null);
 
-        int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
         boolean isFavorite = false;
+        if (cursor != null) {
+            int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
 
-        if (cursor != null && cursor.moveToNext()) {
-            isFavorite = cursor.getInt(indexFavorite) == 1 ? true : false;
+
+            if (cursor.moveToNext()) {
+                isFavorite = cursor.getInt(indexFavorite) == 1;
+            }
+            cursor.close();
         }
-        cursor.close();
 
         return isFavorite;
     }
 
-    @Override
-    public int bulkInsertItems(MovieItem movieItem) {
-        return 0;
-    }
-
-    @Override
-    public Observable<Cursor> query(MovieItem movieItem) {
-        return null;
-    }
-
-    @Override
-    public int deleteRecord(MovieItem movieItem) {
-
-        // Build appropriate uri with String row id appended
-        String stringId = String.valueOf(movieItem.getId());
-        Uri uri = ContractMoviesData.MovieEntry.CONTENT_URI;
-        uri = uri.buildUpon().appendPath(stringId).build();
-
-        // COMPLETED (2) Delete a single row of data using a ContentResolver
-        int deletedRows = mContext.getContentResolver().delete(uri, null, null);
-        return deletedRows;
-    }
 
     @Override
     public Single<Cursor> queryAll(String whereClause, String[] args) {

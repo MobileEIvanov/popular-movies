@@ -6,6 +6,8 @@ import static com.popularmovies.data.RequestParams.IMAGES;
 
 /**
  * Created by emil.ivanov on 2/21/18.
+ * Response object for image configuration request
+ *
  */
 
 public class ConfigurationResponse {

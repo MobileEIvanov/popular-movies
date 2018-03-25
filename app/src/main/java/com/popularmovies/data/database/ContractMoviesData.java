@@ -5,21 +5,22 @@ import android.provider.BaseColumns;
 
 /**
  * Created by emil.ivanov on 3/13/18.
+ * Contract representation for {@link com.popularmovies.entities.MovieItem} data stored in SQLite table.
+ *
  */
 
 public class ContractMoviesData {
 
 
-    public static final String AUTHORITY = "com.popularmovies";
+    static final String AUTHORITY = "com.popularmovies";
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-
-    public static final String PATH_MOVIES = "movies";
+    static final String PATH_MOVIES = "movies";
 
     public static final class MovieEntry implements BaseColumns {
         static final String TABLE_NAME = "movies";
 
-        public static final Uri CONTENT_URI =
+        static final Uri CONTENT_URI =
                 BASE_CONTENT_URI
                         .buildUpon()
                         .appendPath(PATH_MOVIES).build();

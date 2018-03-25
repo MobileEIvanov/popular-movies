@@ -2,17 +2,16 @@ package com.popularmovies.data.database;
 
 import android.database.Cursor;
 import android.net.Uri;
-
 import com.popularmovies.entities.MovieItem;
-
-import io.reactivex.Observable;
 import io.reactivex.Single;
 
 /**
  * Created by emil.ivanov on 3/18/18.
+ * <p>
+ * Data access interface that marks the valid request that can be made to the Movie database.
+ * {@link MovieDaoImpl} holds the implementation of each operation
  */
-
-public interface IMovieDAO {
+interface IMovieDAO {
 
 
     Single<Boolean> findRecord(MovieItem movieItem);
@@ -23,13 +22,6 @@ public interface IMovieDAO {
 
     boolean isFavorite(MovieItem movieItem);
 
-    int bulkInsertItems(MovieItem movieItem);
-
-    Observable<Cursor> query(MovieItem movieItem);
-
-    int deleteRecord(MovieItem movieItem);
-
     Single<Cursor> queryAll(String whereClause, String[] args);
-
 
 }

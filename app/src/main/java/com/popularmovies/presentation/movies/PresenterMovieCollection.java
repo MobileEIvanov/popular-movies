@@ -1,6 +1,5 @@
 package com.popularmovies.presentation.movies;
 
-import android.database.Cursor;
 import android.util.Log;
 
 import com.popularmovies.data.RestClient;
@@ -19,17 +18,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by emil.ivanov on 2/23/18.
+ * MVP pattern Presenter class
  */
 
 public class PresenterMovieCollection implements Presenter {
 
     private final ContractMoviesScreen.View mView;
-    private MovieDaoImpl mMovieDao;
+    private final MovieDaoImpl mMovieDao;
 
     private final CompositeDisposable mCompositeDisposable;
     private Disposable mDisplosableMovies;
@@ -59,8 +58,6 @@ public class PresenterMovieCollection implements Presenter {
         mView.showProgressLoader();
         RestDataSource restDataSource = new RestDataSource();
         mDisplosableMovies = restDataSource.requestMoviesByCategory(category, page, RestClient.API_KEY)
-
-                // TODO: 3/15/18 Make a request for all the movies in the database? and map if there are favorite?
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onSuccessMoviesResponse, onFailureMoviesResponse);
@@ -72,43 +69,37 @@ public class PresenterMovieCollection implements Presenter {
     public void requestFavorites() {
         String whereClause = ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE + "=?";
         String[] selectionArgs = {"1"};
-        mMovieDao.queryAll(whereClause, selectionArgs).map(new Function<Cursor, List<MovieItem>>() {
-            @Override
-            public List<MovieItem> apply(Cursor cursor) throws Exception {
-                int indexId = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_ID);
-                int indexTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE);
-                int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
-                int indexRating = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RATING);
-                int indexReleaseDate = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
-                int indexPlotOverview = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_PLOT_OVERVIEW);
-                int indexOriginalTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE_ORIGINAL);
-                int indexPosterImage = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_POSTER_PATH);
-                List<MovieItem> movieItems = new ArrayList<>();
+        mMovieDao.queryAll(whereClause, selectionArgs).map(cursor -> {
+            int indexId = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_ID);
+            int indexTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE);
+            int indexFavorite = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_IS_FAVORITE);
+            int indexRating = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RATING);
+            int indexReleaseDate = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
+            int indexPlotOverview = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_PLOT_OVERVIEW);
+            int indexOriginalTitle = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_MOVIE_TITLE_ORIGINAL);
+            int indexPosterImage = cursor.getColumnIndex(ContractMoviesData.MovieEntry.COLUMN_POSTER_PATH);
+            List<MovieItem> movieItems = new ArrayList<>();
 
-                while (cursor.moveToNext()) {
-                    MovieItem movieItem = new MovieItem();
+            while (cursor.moveToNext()) {
+                MovieItem movieItem = new MovieItem();
 
-                    movieItem.setTitle(cursor.getString(indexTitle));
-                    movieItem.setFavorite(cursor.getInt(indexFavorite) == 1);
-                    movieItem.setId(cursor.getLong(indexId));
-                    movieItem.setOriginalTitle(cursor.getString(indexOriginalTitle));
-                    movieItem.setOverview(cursor.getString(indexPlotOverview));
-                    movieItem.setVoteAverage(cursor.getFloat(indexRating));
-                    movieItem.setReleaseDate(cursor.getString(indexReleaseDate));
-                    movieItem.setPosterPath(cursor.getString(indexPosterImage));
-                    movieItems.add(movieItem);
-                }
-
-                return movieItems;
+                movieItem.setTitle(cursor.getString(indexTitle));
+                movieItem.setFavorite(cursor.getInt(indexFavorite) == 1);
+                movieItem.setId(cursor.getLong(indexId));
+                movieItem.setOriginalTitle(cursor.getString(indexOriginalTitle));
+                movieItem.setOverview(cursor.getString(indexPlotOverview));
+                movieItem.setVoteAverage(cursor.getFloat(indexRating));
+                movieItem.setReleaseDate(cursor.getString(indexReleaseDate));
+                movieItem.setPosterPath(cursor.getString(indexPosterImage));
+                movieItems.add(movieItem);
             }
-        }).subscribe(new Consumer<List<MovieItem>>() {
-            @Override
-            public void accept(List<MovieItem> movieItems) throws Exception {
-                if (movieItems.size() > 0) {
-                    mView.displayMovies(movieItems);
-                } else {
-                    mView.showEmptyView();
-                }
+
+            return movieItems;
+        }).subscribe(movieItems -> {
+            if (movieItems.size() > 0) {
+                mView.displayMovies(movieItems);
+            } else {
+                mView.showEmptyView();
             }
         });
 
@@ -117,28 +108,28 @@ public class PresenterMovieCollection implements Presenter {
     @Override
     public void onResume() {
         Log.d("Presenter: ", "onResume: Called");
-        if (mCompositeDisposable != null) {
-            if (mDisplosableMovies != null && mDisplosableMovies.isDisposed()) {
-                mCompositeDisposable.add(mDisplosableMovies);
-            }
-            if (mDisplosableConfig != null && mDisplosableConfig.isDisposed()) {
-                mCompositeDisposable.add(mDisplosableConfig);
-            }
+
+        if (mDisplosableMovies != null && mDisplosableMovies.isDisposed()) {
+            mCompositeDisposable.add(mDisplosableMovies);
         }
+        if (mDisplosableConfig != null && mDisplosableConfig.isDisposed()) {
+            mCompositeDisposable.add(mDisplosableConfig);
+        }
+
     }
 
 
     @Override
     public void onStop() {
         Log.d("Presenter ", "onStop: CALLED ");
-        if (mCompositeDisposable != null) {
-            if (mDisplosableMovies != null && mDisplosableMovies.isDisposed()) {
-                mCompositeDisposable.remove(mDisplosableMovies);
-            }
-            if (mDisplosableConfig != null && mDisplosableConfig.isDisposed()) {
-                mCompositeDisposable.remove(mDisplosableConfig);
-            }
+
+        if (mDisplosableMovies != null && mDisplosableMovies.isDisposed()) {
+            mCompositeDisposable.remove(mDisplosableMovies);
         }
+        if (mDisplosableConfig != null && mDisplosableConfig.isDisposed()) {
+            mCompositeDisposable.remove(mDisplosableConfig);
+        }
+
     }
 
     private final Consumer<ConfigurationResponse> onSuccessConfigurations = new Consumer<ConfigurationResponse>() {

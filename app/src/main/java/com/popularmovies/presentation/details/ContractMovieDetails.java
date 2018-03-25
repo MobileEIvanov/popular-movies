@@ -8,18 +8,15 @@ import java.util.List;
 
 /**
  * Created by emil.ivanov on 3/9/18.
+ * Contract representation of Presenter and View actions part of the MVP architecture.
  */
 
+@SuppressWarnings("WeakerAccess")
 public interface ContractMovieDetails {
 
     interface Presenter {
-        void onResume();
 
         void onStop();
-
-        void requestMovieVideos(long movieId);
-
-        void requestMovieReviews(long movieId);
 
         void requestMovieDetails(MovieItem movieItem);
 

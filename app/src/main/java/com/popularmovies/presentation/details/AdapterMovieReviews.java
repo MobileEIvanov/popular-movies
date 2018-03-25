@@ -1,8 +1,8 @@
 package com.popularmovies.presentation.details;
 
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,8 @@ import com.popularmovies.databinding.ItemLayoutMovieReviewBinding;
 import com.popularmovies.entities.MovieReview;
 
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 
 /**
@@ -26,30 +28,27 @@ public class AdapterMovieReviews extends RecyclerView.Adapter<AdapterMovieReview
 
     private final List<MovieReview> mData;
     private final ICollectionReviewInteraction mListenerMovieInteraction;
-    private final Context mContext;
 
-    AdapterMovieReviews(Context context, List<MovieReview> movieItems,
+
+    AdapterMovieReviews(List<MovieReview> movieItems,
                         ICollectionReviewInteraction listenerMovieInteraction) {
         this.mData = movieItems;
         this.mListenerMovieInteraction = listenerMovieInteraction;
-        this.mContext = context;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_layout_movie_review, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@Nonnull final ViewHolder holder, int position) {
         holder.itemView.setTag(position);
         holder.bindData(mData.get(position));
 
-        if ((position >= getItemCount() - 1)) {
-            mListenerMovieInteraction.onLoadMore();
-        }
     }
 
     @Override
@@ -82,22 +81,7 @@ public class AdapterMovieReviews extends RecyclerView.Adapter<AdapterMovieReview
         }
     }
 
-    void addItemsCollection(List<MovieReview> newList) {
-        if (!mData.containsAll(newList)) {
-            mData.addAll(newList);
-            notifyDataSetChanged();
-        }
-    }
-
-    void updateCollection(List<MovieReview> newList) {
-        mData.clear();
-        mData.addAll(newList);
-        notifyDataSetChanged();
-    }
-
     public interface ICollectionReviewInteraction {
         void onReviewSelected(MovieReview movieReviewItem);
-
-        void onLoadMore();
     }
 }

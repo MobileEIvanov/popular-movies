@@ -22,7 +22,6 @@ import android.view.View;
 
 import com.facebook.stetho.Stetho;
 import com.popularmovies.R;
-import com.popularmovies.data.database.ContractMoviesData;
 import com.popularmovies.data.database.MovieDaoImpl;
 import com.popularmovies.databinding.ActivityMovieListBinding;
 import com.popularmovies.entities.MovieItem;
@@ -250,7 +249,7 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
         if (UtilsNetworkConnection.checkInternetConnection(this) && !mUtilsConfig.getCurrentMovieCategory().equals(MOVIE_CATEGORY_FAVORITES)) {
             if (mUtilsConfig.getImageBaseURL() != null && mUtilsConfig.getImageMinSize() != null) {
 
-                if (mUtilsConfig.getCurrentMovieCategory() != null) {
+                if (mUtilsConfig.getCurrentMovieCategory() != null && !mUtilsConfig.getCurrentMovieCategory().isEmpty()) {
 
                     if (isInitialLoad) {
                         mPresenter.requestMoviesByCategory(mUtilsConfig.getCurrentMovieCategory(), DEFAULT_COLLECTION_PAGE);
@@ -318,7 +317,15 @@ public class MovieCollectionActivity extends AppCompatActivity implements Contra
         if (!mUtilsConfig.getCurrentMovieCategory().equals(MOVIE_CATEGORY_FAVORITES)) {
             long page = mUtilsConfig.getCurrentCollectionPage() + 1;
             mUtilsConfig.storeCurrentCollectionPage(page);
-            mPresenter.requestMoviesByCategory(mUtilsConfig.getCurrentMovieCategory(), page);
+
+            if (!mUtilsConfig.getCurrentMovieCategory().isEmpty()) {
+                mPresenter.requestMoviesByCategory(mUtilsConfig.getCurrentMovieCategory(), page);
+            } else {
+
+                mUtilsConfig.storeCurrentUserSelection(DEFAULT_MOVIE_CATEGORY, page);
+                mPresenter.requestMoviesByCategory(DEFAULT_MOVIE_CATEGORY, page);
+            }
+
         }
     }
 

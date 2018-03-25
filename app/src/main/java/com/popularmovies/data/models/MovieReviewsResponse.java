@@ -13,6 +13,9 @@ import static com.popularmovies.data.RequestParams.TOTAL_RESULTS;
 
 /**
  * Created by emil.ivanov on 2/22/18.
+ * <p>
+ * Response object holding the information after request for {@link MovieReview}
+ * representation used in  {@link MovieItem}
  */
 
 public class MovieReviewsResponse {

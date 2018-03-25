@@ -9,16 +9,16 @@ import com.squareup.picasso.Picasso;
 
 /**
  * Created by emil.ivanov on 3/21/18.
+ *
+ * Credits for picasso image cashing to:
+ *  https://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso
  */
 
 
-// https://stackoverflow.com/questions/23978828/how-do-i-use-disk-caching-in-picasso
+
+@SuppressWarnings("DefaultFileTemplate")
 public class PopularMoviesApplication extends Application {
-    //    Red color indicates that image is fetched from network.
-//
-//    Green color indicates that image is fetched from cache memory.
-//
-//    Blue color indicates that image is fetched from disk memory.
+
     @Override
     public void onCreate() {
         super.onCreate();

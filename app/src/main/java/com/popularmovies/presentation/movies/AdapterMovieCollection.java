@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.popularmovies.R;
 import com.popularmovies.databinding.MovieListContentBinding;
 import com.popularmovies.entities.MovieItem;
@@ -19,6 +17,8 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 
 /**
@@ -43,8 +43,9 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
         this.mContext = context;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_list_content, parent, false);
         return new ViewHolder(view);
@@ -52,7 +53,7 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if (payloads != null && payloads.size() > 0 && payloads.get(0) instanceof MovieItem) {
+        if ((payloads.size() > 0) && (payloads.get(0) instanceof MovieItem)) {
             mData.get(position).setFavorite((((MovieItem) payloads.get(0))).isFavorite());
             holder.bindData(mData.get(position));
         } else {
@@ -61,7 +62,7 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@Nonnull final ViewHolder holder, int position) {
         holder.itemView.setTag(position);
         holder.bindData(mData.get(position));
 
@@ -74,7 +75,7 @@ public class AdapterMovieCollection extends RecyclerView.Adapter<AdapterMovieCol
      * Update the adapter items if the favorite status has changed
      * This method is invoked  only when the current selected filter is {@link MovieCollectionActivity#MOVIE_CATEGORY_FAVORITES}
      *
-     * @param movieItem
+     * @param movieItem - currently selected movie item
      */
     public void removeItemFromFavorite(MovieItem movieItem) {
         if (!movieItem.isFavorite()) {

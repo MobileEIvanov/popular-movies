@@ -100,9 +100,8 @@
                 <FrameLayout
                     android:id="@+id/fl_movie_videos"
                     android:layout_width="match_parent"
-                    android:layout_height="140dp"
+                    android:layout_height="@dimen/dimen_videos_container_height"
                     android:layout_marginTop="16dp"
-                    android:paddingStart="16dp"
                     android:background="@color/main_content_videos"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +145,6 @@
                     android:id="@+id/fl_movie_review"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
                     android:layout_marginTop="16dp"
                     android:background="@color/main_content_videos"
                     app:layout_constraintEnd_toEndOf="parent"

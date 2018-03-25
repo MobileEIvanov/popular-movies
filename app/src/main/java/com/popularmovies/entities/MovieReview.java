@@ -8,19 +8,21 @@ import com.popularmovies.data.RequestParams;
 
 /**
  * Created by emil.ivanov on 3/6/18.
+ * Review object representation used in  {@link MovieItem}
  */
 
 public class MovieReview implements Parcelable {
 
     @SerializedName(RequestParams.REVIEW_ID)
-    String id;
+    private String id;
     @SerializedName(RequestParams.REVIEW_AUTHOR)
-    String author;
+    private String author;
     @SerializedName(RequestParams.REVIEW_CONTENT)
-    String content;
+    private String content;
     @SerializedName(RequestParams.REVIEW_URL)
-    String url;
+    private String url;
 
+    @SuppressWarnings("WeakerAccess")
     protected MovieReview(Parcel in) {
         id = in.readString();
         author = in.readString();

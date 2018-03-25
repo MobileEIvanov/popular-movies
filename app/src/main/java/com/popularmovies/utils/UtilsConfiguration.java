@@ -7,6 +7,7 @@ import com.popularmovies.data.models.ImageConfiguration;
 
 /**
  * Created by emil.ivanov on 2/25/18.
+ * Utils configuration preferences class using {@link SharedPreferences} wrapper to store values.
  */
 
 public class UtilsConfiguration {

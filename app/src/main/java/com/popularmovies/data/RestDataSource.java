@@ -3,7 +3,6 @@ package com.popularmovies.data;
 import android.util.Log;
 
 import com.popularmovies.data.models.ConfigurationResponse;
-import com.popularmovies.data.models.MovieDetailsResponse;
 import com.popularmovies.data.models.MovieReviewsResponse;
 import com.popularmovies.data.models.MoviesResponse;
 import com.popularmovies.data.models.MoviesVideoResponse;

@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Created by emil.ivanov on 2/21/18.
+ * Image configuration model
  */
 
 public class ImageConfiguration {

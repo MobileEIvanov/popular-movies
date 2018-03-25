@@ -1,15 +1,8 @@
 package com.popularmovies.presentation.details;
 
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -22,7 +15,6 @@ import android.widget.Toast;
 
 
 import com.popularmovies.R;
-import com.popularmovies.data.database.ContractMoviesData;
 import com.popularmovies.data.database.MovieDaoImpl;
 import com.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.popularmovies.entities.MovieItem;
@@ -60,7 +52,6 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     private MovieItem mMovieItem;
     private UtilsConfiguration mImageConfig;
 
-    private final IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     private PresenterMovieDetails mPresenter;
 
     private AdapterMovieVideos mAdapterVideos;
@@ -80,43 +71,6 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
             }
 
             mPresenter.requestChangeFavoriteStatus(mMovieItem);
-        }
-    };
-
-
-    private final BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final ConnectivityManager connMgr;
-            connMgr = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            if (connMgr != null) {
-                final android.net.NetworkInfo wifi = connMgr
-                        .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-                final android.net.NetworkInfo mobile = connMgr
-                        .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-
-                mBinding.layoutNoConnection.getRoot().setVisibility(View.INVISIBLE);
-                if (mBinding.contentDetails.getVisibility() == View.INVISIBLE) {
-                    mBinding.contentDetails.setVisibility(View.VISIBLE);
-                }
-
-                if (wifi.isAvailable() || mobile.isAvailable()) {
-
-                    if (wifi.isConnected() || mobile.isConnected()) {
-
-
-                    } else {
-//                        if (mBinding.layoutNoConnection.getRoot().getVisibility() == View.INVISIBLE) {
-//                            mBinding.layoutNoConnection.getRoot().setVisibility(View.VISIBLE);
-//                            mBinding.contentDetails.setVisibility(View.INVISIBLE);
-//                        }
-                    }
-                }
-            }
         }
     };
 
@@ -148,18 +102,12 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
         mBinding.fabMarkAsFavorite.setOnClickListener(mListenerChangeIsFavorite);
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        this.registerReceiver(mConnectionReceiver, filter);
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
-        this.unregisterReceiver(mConnectionReceiver);
+        if (mPresenter != null) {
+            mPresenter.onStop();
+        }
     }
 
     @Override
@@ -268,7 +216,6 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
 
 
         Picasso.with(this).load(imagePosterUrl)
-                // TODO: 3/5/18  Add placeholder image and on Error
                 .placeholder(R.color.colorPrimary)
                 .error(R.drawable.empty_image)
                 .fit()
@@ -351,7 +298,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     public void displayVideos(List<MovieVideo> movieVideos) {
 
         if (mAdapterVideos == null) {
-            mAdapterVideos = new AdapterMovieVideos(this, movieVideos, this);
+            mAdapterVideos = new AdapterMovieVideos(movieVideos, this);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             mBinding.rvMovieVideos.setLayoutManager(layoutManager);
             mBinding.rvMovieVideos.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
@@ -364,7 +311,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
     public void displayReviews(List<MovieReview> movieReviews) {
 
         if (mAdapterReviews == null) {
-            mAdapterReviews = new AdapterMovieReviews(this, movieReviews, this);
+            mAdapterReviews = new AdapterMovieReviews(movieReviews, this);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             mBinding.rvMovieReviews.setLayoutManager(layoutManager);
             mBinding.rvMovieReviews.addItemDecoration(new EqualSpacingItemDecoration(16, EqualSpacingItemDecoration.HORIZONTAL));
@@ -404,23 +351,22 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
 
-        String uriYoutube = String.valueOf(Uri.parse("vnd.youtube:" + videoItem.getVideoKey()));
-        String webYoutube = "http://www.youtube.com/watch?v=" + videoItem.getVideoKey();
+        String uriYoutube = String.valueOf(Uri.parse(getString(R.string.uri_path_youtube) + videoItem.getVideoKey()));
+        String webYoutube = getString(R.string.url_path_youtube_app) + videoItem.getVideoKey();
 
-        StringBuilder shareMessage = new StringBuilder();
-        shareMessage.append(getString(R.string.share_message_watch_youtube_app))
-                .append("\n\n")
-                .append(uriYoutube)
-                .append("\n\n")
-                .append(getString(R.string.share_message_watch_on_web))
-                .append("\n\n")
-                .append(webYoutube)
-                .append("\n\n")
-                .append(getString(R.string.share_message_enjoy));
+        String shareMessage = getString(R.string.share_message_watch_youtube_app) +
+                "\n\n" +
+                uriYoutube +
+                "\n\n" +
+                getString(R.string.share_message_watch_on_web) +
+                "\n\n" +
+                webYoutube +
+                "\n\n" +
+                getString(R.string.share_message_enjoy);
 
 
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, mMovieItem.getTitle() + "\n" + getString(R.string.share_message_subject));
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage.toString());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_message_dialog_title)));
     }
 
@@ -430,8 +376,5 @@ public class MovieDetailActivity extends AppCompatActivity implements ContractMo
         startActivity(webIntent);
     }
 
-    @Override
-    public void onLoadMore() {
-        // Future support for loading more reviews
-    }
+
 }

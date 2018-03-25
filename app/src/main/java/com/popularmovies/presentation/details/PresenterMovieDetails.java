@@ -7,12 +7,8 @@ import com.popularmovies.data.RequestParams;
 import com.popularmovies.data.RestClient;
 import com.popularmovies.data.RestDataSource;
 import com.popularmovies.data.database.MovieDaoImpl;
-import com.popularmovies.data.models.MovieReviewsResponse;
-import com.popularmovies.data.models.MoviesVideoResponse;
 import com.popularmovies.entities.MovieItem;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -21,73 +17,32 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by emil.ivanov on 3/9/18.
+ * Presenter class implementing the {@link ContractMovieDetails.Presenter} part of MVP architecture patter.
  */
 
 public class PresenterMovieDetails implements ContractMovieDetails.Presenter {
 
-    private ContractMovieDetails.View mView;
-    private MovieDaoImpl mMovieDao;
+    private final ContractMovieDetails.View mView;
+    private final MovieDaoImpl mMovieDao;
+    private Disposable mNetworkOperation;
+    private Disposable mDatabaseOperation;
 
-    public PresenterMovieDetails(ContractMovieDetails.View view, MovieDaoImpl movieDao) {
+    PresenterMovieDetails(ContractMovieDetails.View view, MovieDaoImpl movieDao) {
         this.mView = view;
         this.mMovieDao = movieDao;
     }
 
-    @Override
-    public void onResume() {
-
-    }
 
     @Override
     public void onStop() {
-        if (!mDatabaseOperation.isDisposed()) {
+
+        if (mDatabaseOperation != null && !mDatabaseOperation.isDisposed()) {
             mDatabaseOperation.dispose();
         }
 
-        if (!mNetworkOperationReview.isDisposed()) {
-            mNetworkOperationReview.dispose();
+        if (mNetworkOperation != null && !mNetworkOperation.isDisposed()) {
+            mNetworkOperation.dispose();
         }
-
-        if (!mNetworkOperationVideos.isDisposed()) {
-            mNetworkOperationVideos.dispose();
-        }
-
-    }
-
-    Disposable mNetworkOperationVideos;
-
-    @Override
-    public void requestMovieVideos(long movieId) {
-        RestDataSource restDataSource = new RestDataSource();
-        mNetworkOperationVideos = restDataSource.requestMovieVideos(movieId, RestClient.API_KEY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onSuccessVideosResponse, onFailureVideosResponse);
-    }
-
-    private final Consumer<MoviesVideoResponse> onSuccessVideosResponse = moviesVideoResponse -> {
-        if (moviesVideoResponse != null && moviesVideoResponse.getMovieVideos() != null && moviesVideoResponse.getMovieVideos().size() > 0) {
-            mView.displayVideos(moviesVideoResponse.getMovieVideos());
-        } else {
-            mView.displayEmptyVideos();
-        }
-    };
-
-    private final Consumer<Throwable> onFailureVideosResponse = throwable -> {
-        mView.displayEmptyVideos();
-    };
-
-    Disposable mNetworkOperationReview;
-
-    @Override
-    public void requestMovieReviews(long movieId) {
-
-        // TODO: 3/8/18 http://www.zoftino.com/retrofit-rxjava-android-example
-        RestDataSource restDataSource = new RestDataSource();
-        mNetworkOperationReview = restDataSource.requestMovieReviews(movieId, RestClient.API_KEY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onSuccessReviewsResponse, onFailureReviewsResponse);
     }
 
 
@@ -98,21 +53,17 @@ public class PresenterMovieDetails implements ContractMovieDetails.Presenter {
                 RequestParams.REVIEWS;
 
         RestDataSource restDataSource = new RestDataSource();
-        mNetworkOperationReview = restDataSource.requestMovieDetails(movieItem.getId(), RestClient.API_KEY, appendToRequest)
-                .map(new Function<MovieItem, MovieItem>() {
-                    @Override
-                    public MovieItem apply(MovieItem movieItem) throws Exception {
-                        boolean isFavorite = mMovieDao.isFavorite(movieItem);
-                        movieItem.setFavorite(isFavorite);
-                        return movieItem;
-                    }
+        mNetworkOperation = restDataSource.requestMovieDetails(movieItem.getId(), RestClient.API_KEY, appendToRequest)
+                .map(movieItem1 -> {
+                    boolean isFavorite = mMovieDao.isFavorite(movieItem1);
+                    movieItem1.setFavorite(isFavorite);
+                    return movieItem1;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onSuccessDetailsResponse, onFailureDetailsResponse);
     }
 
-    Disposable mDatabaseOperation;
 
     @Override
     public void requestChangeFavoriteStatus(MovieItem movieItem) {
@@ -132,7 +83,6 @@ public class PresenterMovieDetails implements ContractMovieDetails.Presenter {
     }
 
 
-
     private final Consumer<MovieItem> onSuccessDetailsResponse = new Consumer<MovieItem>() {
         @Override
         public void accept(MovieItem movieItem) throws Exception {
@@ -143,25 +93,6 @@ public class PresenterMovieDetails implements ContractMovieDetails.Presenter {
     };
 
     private final Consumer<Throwable> onFailureDetailsResponse = new Consumer<Throwable>() {
-        @Override
-        public void accept(Throwable throwable) throws Exception {
-            mView.displayEmptyReviews();
-        }
-    };
-
-
-    private final Consumer<MovieReviewsResponse> onSuccessReviewsResponse = new Consumer<MovieReviewsResponse>() {
-        @Override
-        public void accept(MovieReviewsResponse movieReviewsResponse) throws Exception {
-            if (movieReviewsResponse != null && movieReviewsResponse.getMovieReviewsItems() != null && movieReviewsResponse.getMovieReviewsItems().size() > 0) {
-                mView.displayReviews(movieReviewsResponse.getMovieReviewsItems());
-            } else {
-                mView.displayEmptyReviews();
-            }
-        }
-    };
-
-    private final Consumer<Throwable> onFailureReviewsResponse = new Consumer<Throwable>() {
         @Override
         public void accept(Throwable throwable) throws Exception {
             mView.displayEmptyReviews();

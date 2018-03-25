@@ -9,15 +9,17 @@ import static com.popularmovies.data.database.ContractMoviesData.MovieEntry.SQL_
 
 /**
  * Created by emil.ivanov on 3/13/18.
+ * DatabaseHelper class responsible for the creation of Movie database.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "popular_movies.db";
     private static final int DATABASE_VERSION = 1;
 
 
-    public DatabaseHelper(Context context) {
+    DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

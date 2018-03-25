@@ -14,6 +14,7 @@ import static com.popularmovies.data.RequestParams.TOTAL_RESULTS;
  * Created by emil.ivanov on 2/22/18.
  */
 
+@SuppressWarnings("DefaultFileTemplate")
 public class MoviesResponse {
 
     @SerializedName(TOTAL_RESULTS)

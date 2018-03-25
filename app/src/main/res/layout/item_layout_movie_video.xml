@@ -25,7 +25,8 @@
                 android:layout_marginTop="4dp"
                 android:src="@android:drawable/ic_menu_share"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/content_description_share_image" />
             <FrameLayout
                 android:id="@+id/fl_play_icon"
                 android:layout_width="36dp"
@@ -39,7 +40,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_play_circle_outline_white_48dp" />
+                    android:src="@drawable/ic_play_circle_outline_white_48dp"
+                    android:contentDescription="@string/content_description_play_video" />
             </FrameLayout>
 
             <TextView

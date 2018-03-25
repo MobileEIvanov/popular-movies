@@ -10,31 +10,28 @@ import com.popularmovies.data.RequestParams;
  * Created by emil.ivanov on 3/6/18.
  */
 
+@SuppressWarnings({"CanBeFinal", "DefaultFileTemplate"})
 public class MovieVideo implements Parcelable {
 
-    public static final String TYPE_TRAILER = "";
-    public static final String TYPE_TEASER ="";
-    public static final String TYPE_CLIP ="";
-    public static final String TYPE_FEATURETTE ="";
-
     @SerializedName(RequestParams.VIDEO_ID)
-    String id;
+    private String id;
 
     @SerializedName(RequestParams.VIDEO_KEY)
-    String videoKey;
+    private String videoKey;
 
     @SerializedName(RequestParams.VIDEO_SITE)
-    String videoSite;
+    private String videoSite;
 
     @SerializedName(RequestParams.VIDEO_SIZE)
-    int videoSize;
+    private int videoSize;
 
     @SerializedName(RequestParams.VIDEO_TYPE)
-    String videoType;
+    private String videoType;
 
     @SerializedName(RequestParams.VIDEO_NAME)
-    String name;
+    private String name;
 
+    @SuppressWarnings("WeakerAccess")
     protected MovieVideo(Parcel in) {
         id = in.readString();
         videoKey = in.readString();

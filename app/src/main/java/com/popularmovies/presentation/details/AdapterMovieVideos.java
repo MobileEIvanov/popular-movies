@@ -1,22 +1,18 @@
 package com.popularmovies.presentation.details;
 
-
-import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.popularmovies.R;
 import com.popularmovies.databinding.ItemLayoutMovieVideoBinding;
-import com.popularmovies.databinding.MovieListContentBinding;
-import com.popularmovies.entities.MovieItem;
 import com.popularmovies.entities.MovieVideo;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 
 /**
@@ -30,24 +26,24 @@ public class AdapterMovieVideos extends RecyclerView.Adapter<AdapterMovieVideos.
 
     private final List<MovieVideo> mData;
     private final ICollectionVideosInteraction mListenerMovieInteraction;
-    private final Context mContext;
 
-    AdapterMovieVideos(Context context, List<MovieVideo> movieItems,
+
+    AdapterMovieVideos(List<MovieVideo> movieItems,
                        ICollectionVideosInteraction listenerMovieInteraction) {
         this.mData = movieItems;
         this.mListenerMovieInteraction = listenerMovieInteraction;
-        this.mContext = context;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_layout_movie_video, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@Nonnull final ViewHolder holder, int position) {
         holder.itemView.setTag(position);
         holder.bindData(mData.get(position));
 
@@ -92,18 +88,7 @@ public class AdapterMovieVideos extends RecyclerView.Adapter<AdapterMovieVideos.
         }
     }
 
-    void addItemsCollection(List<MovieVideo> newList) {
-        if (!mData.containsAll(newList)) {
-            mData.addAll(newList);
-            notifyDataSetChanged();
-        }
-    }
 
-    void updateCollection(List<MovieVideo> newList) {
-        mData.clear();
-        mData.addAll(newList);
-        notifyDataSetChanged();
-    }
 
     public interface ICollectionVideosInteraction {
         void onVideoSelected(MovieVideo videoItem);

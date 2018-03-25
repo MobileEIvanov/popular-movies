@@ -7,10 +7,6 @@ import com.google.gson.annotations.SerializedName;
 import com.popularmovies.data.RequestParams;
 import com.popularmovies.data.models.MovieReviewsResponse;
 import com.popularmovies.data.models.MoviesVideoResponse;
-
-
-import java.util.List;
-
 import static com.popularmovies.data.RequestParams.ADULT;
 import static com.popularmovies.data.RequestParams.BACKGROP_PATH;
 import static com.popularmovies.data.RequestParams.GENRE_IDS;
@@ -75,10 +71,10 @@ public class MovieItem implements Parcelable {
 
 
     @SerializedName(RequestParams.REVIEWS)
-    MovieReviewsResponse reviews;
+    private MovieReviewsResponse reviews;
 
     @SerializedName(RequestParams.VIDEOS)
-    MoviesVideoResponse videos;
+    private MoviesVideoResponse videos;
 
     public MovieReviewsResponse getReviews() {
         return reviews;
@@ -101,8 +97,7 @@ public class MovieItem implements Parcelable {
 
         MovieItem movieItem = (MovieItem) o;
 
-        if (id != movieItem.id) return false;
-        return title.equals(movieItem.title);
+        return id == movieItem.id && title.equals(movieItem.title);
     }
 
     @Override
@@ -112,6 +107,7 @@ public class MovieItem implements Parcelable {
         return result;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected MovieItem(Parcel in) {
         id = in.readLong();
         posterPath = in.readString();
